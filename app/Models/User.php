@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'class_id',
     ];
 
     /**
@@ -42,4 +44,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * リレーション: 所属クラス
+     */
+    public function class()
+    {
+        return $this->belongsTo(ClassModel::class, 'class_id');
+    }
+
+    /**
+     * リレーション: 連絡帳（生徒の場合）
+     */
+    public function entries()
+    {
+        return $this->hasMany(Entry::class);
+    }
+
+    /**
+     * リレーション: 既読処理した連絡帳（担任の場合）
+     */
+    public function readEntries()
+    {
+        return $this->hasMany(Entry::class, 'read_by');
+    }
 }
