@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\HomeController as StudentHomeController;
+use App\Http\Controllers\Student\EntryController as StudentEntryController;
 use App\Http\Controllers\Teacher\HomeController as TeacherHomeController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use Illuminate\Support\Facades\Route;
@@ -24,9 +25,11 @@ Route::get('/', function () {
 // 生徒用ルート
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/home', [StudentHomeController::class, 'index'])->name('home');
+    Route::get('/entries/{entry}', [StudentEntryController::class, 'show'])->name('entries.show');
+    Route::get('/entries/{entry}/edit', [StudentEntryController::class, 'edit'])->name('entries.edit');
+    Route::patch('/entries/{entry}', [StudentEntryController::class, 'update'])->name('entries.update');
     // TODO: 以下は後で実装
     // Route::get('/entries/create', [StudentEntryController::class, 'create'])->name('entries.create');
-    // Route::get('/entries/{entry}', [StudentEntryController::class, 'show'])->name('entries.show');
 });
 
 // 担任用ルート

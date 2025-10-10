@@ -103,8 +103,8 @@
                         @endif
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="#"
-                          class="text-gray-400 cursor-not-allowed">詳細（未実装）</a>
+                        <a href="{{ route('student.entries.show', $entry->id) }}"
+                          class="text-indigo-600 hover:text-indigo-900">詳細</a>
                       </td>
                     </tr>
                   @endforeach
