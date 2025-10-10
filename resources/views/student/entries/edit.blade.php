@@ -1,9 +1,15 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        連絡帳編集
-      </h2>
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+      <div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+          連絡帳編集
+        </h2>
+        <div class="text-sm text-gray-600 mt-1">
+          <span class="font-medium">今日:</span>
+          {{ \Carbon\Carbon::now()->format('Y年m月d日（' . ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::now()->dayOfWeek] . '）') }}
+        </div>
+      </div>
       <a href="{{ route('student.entries.show', $entry) }}"
         class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
         キャンセル
