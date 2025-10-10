@@ -16,13 +16,10 @@ class ClassSeeder extends Seeder
         $classes = [
             ['grade' => 1, 'class_name' => 'A'],
             ['grade' => 1, 'class_name' => 'B'],
-            ['grade' => 1, 'class_name' => 'C'],
             ['grade' => 2, 'class_name' => 'A'],
             ['grade' => 2, 'class_name' => 'B'],
-            ['grade' => 2, 'class_name' => 'C'],
             ['grade' => 3, 'class_name' => 'A'],
             ['grade' => 3, 'class_name' => 'B'],
-            ['grade' => 3, 'class_name' => 'C'],
         ];
 
         foreach ($classes as $class) {
