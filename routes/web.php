@@ -25,11 +25,11 @@ Route::get('/', function () {
 // 生徒用ルート
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/home', [StudentHomeController::class, 'index'])->name('home');
+    Route::get('/entries/create', [StudentEntryController::class, 'create'])->name('entries.create');
+    Route::post('/entries', [StudentEntryController::class, 'store'])->name('entries.store');
     Route::get('/entries/{entry}', [StudentEntryController::class, 'show'])->name('entries.show');
     Route::get('/entries/{entry}/edit', [StudentEntryController::class, 'edit'])->name('entries.edit');
     Route::patch('/entries/{entry}', [StudentEntryController::class, 'update'])->name('entries.update');
-    // TODO: 以下は後で実装
-    // Route::get('/entries/create', [StudentEntryController::class, 'create'])->name('entries.create');
 });
 
 // 担任用ルート
