@@ -29,7 +29,16 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        // ロール別にリダイレクト先を変更
+        $user = $request->user();
+        $redirectTo = match ($user->role) {
+            'student' => route('student.home'),
+            'teacher' => route('teacher.home'),
+            'admin' => route('admin.home'),
+            default => RouteServiceProvider::HOME,
+        };
+
+        return redirect()->intended($redirectTo);
     }
 
     /**
