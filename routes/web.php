@@ -24,6 +24,9 @@ Route::get('/', function () {
 // 生徒用ルート
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/home', [StudentHomeController::class, 'index'])->name('home');
+    // TODO: 以下は後で実装
+    // Route::get('/entries/create', [StudentEntryController::class, 'create'])->name('entries.create');
+    // Route::get('/entries/{entry}', [StudentEntryController::class, 'show'])->name('entries.show');
 });
 
 // 担任用ルート

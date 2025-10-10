@@ -15,10 +15,23 @@ class HomeController extends Controller
     {
         $user = $request->user();
 
-        // 自分の連絡帳記録を取得（新しい順）
-        $entries = $user->entries()
-            ->orderBy('entry_date', 'desc')
-            ->paginate(20);
+        // クエリビルダーを開始
+        $query = $user->entries();
+
+        // 日付範囲の絞り込み
+        if ($request->filled('date_from')) {
+            $query->where('entry_date', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->where('entry_date', '<=', $request->date_to);
+        }
+
+        // ソート順
+        $sort = $request->get('sort', 'desc');
+        $query->orderBy('entry_date', $sort);
+
+        // ページネーション
+        $entries = $query->paginate(20)->withQueryString();
 
         return view('student.home', compact('entries'));
     }
