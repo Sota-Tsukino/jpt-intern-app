@@ -151,16 +151,22 @@ entries (連絡帳)
 ## 6. 初期データ（Seeder）
 
 ### 6.1 ClassSeeder
+- 学年（1~3）
+- クラス（A~B）
+```
 1年A組（id: 1, grade: 1, class_name: 'A'）
 1年B組（id: 2, grade: 1, class_name: 'B'）
+2年A組（id: 3, grade: 2, class_name: 'A'）
+2年B組（id: 4, grade: 2, class_name: 'B'）
+3年A組（id: 5, grade: 3, class_name: 'A'）
+3年B組（id: 6, grade: 3, class_name: 'B'）
+```
 
 ### 6.2 UserSeeder
-管理者 × 1
-担任 × 2（各クラス1名）
-生徒 × 6（各クラス3名）
+- 管理者 × 1
+- 担任 × 6（各クラス1名）
+- 生徒 × 180（各クラス最大30名）
 
-### 6.3 EntrySeeder
----
 
 ## 7. バックアップ・リストア
 
