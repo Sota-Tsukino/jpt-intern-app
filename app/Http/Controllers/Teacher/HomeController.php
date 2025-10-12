@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\User;
@@ -16,14 +17,20 @@ class HomeController extends Controller
     {
         $teacher = $request->user();
 
-        // 担当クラスの生徒を取得
+        // 担当クラス情報を取得
+        $teacher->load('class');
+
+        // 記録対象日（前登校日）を計算
+        $entryDate = $this->calculateEntryDate();
+
+        // 担当クラスの生徒を取得（記録対象日の連絡帳も一緒に取得）
         $students = User::where('role', 'student')
             ->where('class_id', $teacher->class_id)
+            ->with(['entries' => function ($query) use ($entryDate) {
+                $query->where('entry_date', $entryDate);
+            }])
             ->orderBy('name')
             ->get();
-
-        // 今日の日付
-        $today = now()->format('Y-m-d');
 
         // 提出状況の集計
         $totalStudents = $students->count();
@@ -31,9 +38,11 @@ class HomeController extends Controller
         $readCount = 0;
 
         foreach ($students as $student) {
-            $todayEntry = $student->entries()
-                ->where('entry_date', $today)
-                ->first();
+            // 記録対象日の連絡帳を取得（既にeager loadingで取得済み）
+            $todayEntry = $student->entries->first();
+
+            // 生徒オブジェクトに記録対象日の連絡帳を追加
+            $student->todayEntry = $todayEntry;
 
             if ($todayEntry) {
                 $submittedCount++;
@@ -46,12 +55,29 @@ class HomeController extends Controller
         $unsubmittedCount = $totalStudents - $submittedCount;
 
         return view('teacher.home', compact(
+            'teacher',
             'students',
             'totalStudents',
             'submittedCount',
             'readCount',
             'unsubmittedCount',
-            'today'
+            'entryDate'
         ));
+    }
+
+    /**
+     * 記録対象日を計算（前登校日）
+     */
+    private function calculateEntryDate(): string
+    {
+        $today = Carbon::now();
+        $entryDate = $today->copy()->subDay();
+
+        // 土日をスキップ
+        while ($entryDate->isWeekend()) {
+            $entryDate->subDay();
+        }
+
+        return $entryDate->format('Y-m-d');
     }
 }

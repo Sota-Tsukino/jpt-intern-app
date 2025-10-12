@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Student\HomeController as StudentHomeController;
 use App\Http\Controllers\Student\EntryController as StudentEntryController;
 use App\Http\Controllers\Teacher\HomeController as TeacherHomeController;
+use App\Http\Controllers\Teacher\EntryController as TeacherEntryController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,9 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
 // 担任用ルート
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/home', [TeacherHomeController::class, 'index'])->name('home');
+    Route::get('/entries', [TeacherEntryController::class, 'index'])->name('entries.index');
+    Route::get('/entries/{entry}', [TeacherEntryController::class, 'show'])->name('entries.show');
+    Route::patch('/entries/{entry}/mark-as-read', [TeacherEntryController::class, 'markAsRead'])->name('entries.markAsRead');
 });
 
 // 管理者用ルート
