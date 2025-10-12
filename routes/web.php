@@ -36,6 +36,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
 // 担任用ルート
 Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/home', [TeacherHomeController::class, 'index'])->name('home');
+    Route::get('/entries', [TeacherEntryController::class, 'index'])->name('entries.index');
     Route::get('/entries/{entry}', [TeacherEntryController::class, 'show'])->name('entries.show');
     Route::patch('/entries/{entry}/mark-as-read', [TeacherEntryController::class, 'markAsRead'])->name('entries.markAsRead');
 });

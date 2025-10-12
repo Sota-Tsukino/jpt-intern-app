@@ -12,6 +12,42 @@ use Carbon\Carbon;
 class EntryController extends Controller
 {
     /**
+     * 過去の連絡帳一覧を表示（既読済みのみ）
+     */
+    public function index(Request $request): View
+    {
+        $teacher = $request->user();
+        $teacher->load('class');
+
+        // 担当クラスの生徒の既読済み連絡帳を取得
+        $query = Entry::whereHas('user', function ($q) use ($teacher) {
+            $q->where('class_id', $teacher->class_id);
+        })->where('is_read', true)->with(['user']);
+
+        // 生徒名で絞り込み
+        if ($request->filled('student_name')) {
+            $query->whereHas('user', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->student_name . '%');
+            });
+        }
+
+        // 記録対象日（開始日）で絞り込み
+        if ($request->filled('date_from')) {
+            $query->where('entry_date', '>=', $request->date_from);
+        }
+
+        // 記録対象日（終了日）で絞り込み
+        if ($request->filled('date_to')) {
+            $query->where('entry_date', '<=', $request->date_to);
+        }
+
+        // 記録対象日の降順でソート
+        $entries = $query->orderBy('entry_date', 'desc')->paginate(20)->withQueryString();
+
+        return view('teacher.entries.index', compact('entries', 'teacher'));
+    }
+
+    /**
      * 連絡帳の詳細を表示
      */
     public function show(Request $request, Entry $entry): View|RedirectResponse
