@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\ClassModel;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Illuminate\Validation\Rule;
 
@@ -73,5 +75,22 @@ class UserController extends Controller
         return redirect()
             ->route('admin.users.show', $user)
             ->with('success', 'ユーザー情報を更新しました。');
+    }
+
+    /**
+     * パスワードをリセット
+     */
+    public function resetPassword(User $user): RedirectResponse
+    {
+        // ランダムな英数字8文字のパスワードを生成
+        $newPassword = Str::random(8);
+
+        $user->update([
+            'password' => Hash::make($newPassword),
+        ]);
+
+        return redirect()
+            ->route('admin.users.show', $user)
+            ->with('new_password', $newPassword);
     }
 }
