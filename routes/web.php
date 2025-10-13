@@ -47,6 +47,8 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
     Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
     Route::get('/classes', [AdminClassController::class, 'index'])->name('classes.index');
     Route::get('/classes/create', [AdminClassController::class, 'create'])->name('classes.create');
     Route::post('/classes', [AdminClassController::class, 'store'])->name('classes.store');
