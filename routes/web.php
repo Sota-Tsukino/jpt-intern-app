@@ -6,6 +6,7 @@ use App\Http\Controllers\Student\EntryController as StudentEntryController;
 use App\Http\Controllers\Teacher\HomeController as TeacherHomeController;
 use App\Http\Controllers\Teacher\EntryController as TeacherEntryController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
+use App\Http\Controllers\Admin\ClassController as AdminClassController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,6 +45,7 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
 // 管理者用ルート
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
+    Route::get('/classes', [AdminClassController::class, 'index'])->name('classes.index');
 });
 
 Route::middleware('auth')->group(function () {
