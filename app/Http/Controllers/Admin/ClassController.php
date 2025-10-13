@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Validation\Rule;
 
 class ClassController extends Controller
 {
@@ -45,13 +46,21 @@ class ClassController extends Controller
     {
         $validated = $request->validate([
             'grade' => 'required|integer|min:1|max:3',
-            'class_name' => 'required|string|max:10',
+            'class_name' => [
+                'required',
+                'string',
+                'max:10',
+                Rule::unique('classes')->where(function ($query) use ($request) {
+                    return $query->where('grade', $request->grade);
+                }),
+            ],
             'teacher_id' => 'nullable|exists:users,id',
         ], [
             'grade.required' => '学年は必須です。',
             'grade.min' => '学年は1以上を指定してください。',
             'grade.max' => '学年は3以下を指定してください。',
             'class_name.required' => 'クラス名は必須です。',
+            'class_name.unique' => 'この学年・クラス名の組み合わせは既に登録されています。',
             'teacher_id.exists' => '指定された担任が存在しません。',
         ]);
 
@@ -98,13 +107,22 @@ class ClassController extends Controller
     {
         $validated = $request->validate([
             'grade' => 'required|integer|min:1|max:3',
-            'class_name' => 'required|string|max:10',
+            'class_name' => [
+                'required',
+                'string',
+                'max:10',
+                //このコードの意味
+                Rule::unique('classes')->where(function ($query) use ($request) {
+                    return $query->where('grade', $request->grade);
+                })->ignore($class->id),
+            ],
             'teacher_id' => 'nullable|exists:users,id',
         ], [
             'grade.required' => '学年は必須です。',
             'grade.min' => '学年は1以上を指定してください。',
             'grade.max' => '学年は3以下を指定してください。',
             'class_name.required' => 'クラス名は必須です。',
+            'class_name.unique' => 'この学年・クラス名の組み合わせは既に登録されています。',
             'teacher_id.exists' => '指定された担任が存在しません。',
         ]);
 
@@ -135,11 +153,11 @@ class ClassController extends Controller
      */
     public function destroy(ClassModel $class): RedirectResponse
     {
-        // クラスに所属する生徒・担任がいる場合は削除不可
-        if ($class->students()->count() > 0 || $class->teacher) {
+        // 担任もしくは生徒が配置されている場合は削除不可
+        if ($class->teacher || $class->students()->count() > 0) {
             return redirect()
                 ->route('admin.classes.index')
-                ->with('error', '生徒または担任が配置されているクラスは削除できません。');
+                ->with('error', '担任もしくは生徒が配置されているクラスは削除できません。');
         }
 
         $class->delete();

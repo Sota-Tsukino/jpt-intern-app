@@ -48,6 +48,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/classes', [AdminClassController::class, 'index'])->name('classes.index');
     Route::get('/classes/create', [AdminClassController::class, 'create'])->name('classes.create');
     Route::post('/classes', [AdminClassController::class, 'store'])->name('classes.store');
+    Route::get('/classes/{class}/edit', [AdminClassController::class, 'edit'])->name('classes.edit');
+    Route::put('/classes/{class}', [AdminClassController::class, 'update'])->name('classes.update');
+    Route::delete('/classes/{class}', [AdminClassController::class, 'destroy'])->name('classes.destroy');
 });
 
 Route::middleware('auth')->group(function () {
