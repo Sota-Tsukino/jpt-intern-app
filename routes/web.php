@@ -46,6 +46,8 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
 // 管理者用ルート
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
     Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
     Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');

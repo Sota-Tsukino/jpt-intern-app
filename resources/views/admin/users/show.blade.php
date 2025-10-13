@@ -18,9 +18,18 @@
               </svg>
             </div>
             <div class="ml-3 flex-1">
-              <h3 class="text-lg font-bold text-yellow-800 mb-2">パスワードをリセットしました</h3>
+              @if (session('new_user_created'))
+                <h3 class="text-lg font-bold text-yellow-800 mb-2">ユーザーを登録しました</h3>
+              @else
+                <h3 class="text-lg font-bold text-yellow-800 mb-2">パスワードをリセットしました</h3>
+              @endif
               <div class="text-yellow-800 space-y-2">
-                <p class="font-semibold text-base">新しいパスワード：
+                <p class="font-semibold text-base">
+                  @if (session('new_user_created'))
+                    初期パスワード：
+                  @else
+                    新しいパスワード：
+                  @endif
                   <span
                     class="inline-block bg-yellow-100 px-3 py-1 rounded border border-yellow-300 font-mono text-lg">{{ session('new_password') }}</span>
                 </p>
