@@ -111,10 +111,9 @@ class ClassController extends Controller
                 'required',
                 'string',
                 'max:10',
-                //このコードの意味
                 Rule::unique('classes')->where(function ($query) use ($request) {
                     return $query->where('grade', $request->grade);
-                })->ignore($class->id),
+                })->ignore($class->id),// ignore()で現在編集しているクラスidを除外(重複チェックから除外)
             ],
             'teacher_id' => 'nullable|exists:users,id',
         ], [
