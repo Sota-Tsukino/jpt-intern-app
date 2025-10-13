@@ -29,7 +29,19 @@
       <!-- クラス一覧 -->
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">クラス一覧</h3>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900">クラス一覧</h3>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.classes.create') }}"
+                  class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                  新規登録
+                </a>
+                <a href="{{ route('admin.home') }}"
+                  class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                  ホームに戻る
+                </a>
+            </div>
+          </div>
 
           @if ($classes->count() > 0)
             <div class="overflow-x-auto">
