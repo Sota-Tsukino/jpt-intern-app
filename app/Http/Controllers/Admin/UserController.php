@@ -143,4 +143,20 @@ class UserController extends Controller
             ->route('admin.users.show', $user)
             ->with('new_password', $newPassword);
     }
+
+    /**
+     * ユーザーを削除
+     */
+    public function destroy(User $user): RedirectResponse
+    {
+        // ユーザー名を保存（削除後のメッセージ用）
+        $userName = $user->name;
+
+        // ユーザーを削除
+        $user->delete();
+
+        return redirect()
+            ->route('admin.home')
+            ->with('success', "ユーザー「{$userName}」を削除しました。");
+    }
 }
