@@ -137,10 +137,19 @@
 
           <!-- アクションボタン -->
           <div class="flex justify-between items-center">
-            <a href="{{ route('teacher.home') }}"
-              class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-              一覧に戻る
-            </a>
+            <div class="flex gap-2">
+              @if (request('from') === 'past')
+                <a href="{{ route('teacher.entries.index') }}"
+                  class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                  過去記録一覧に戻る
+                </a>
+              @else
+                <a href="{{ route('teacher.home') }}"
+                  class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                  ホームに戻る
+                </a>
+              @endif
+            </div>
 
             @if (!$entry->is_read)
               <form method="POST" action="{{ route('teacher.entries.markAsRead', $entry) }}">

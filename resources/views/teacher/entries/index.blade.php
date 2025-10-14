@@ -67,7 +67,13 @@
       <!-- 連絡帳一覧 -->
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">過去記録一覧</h3>
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">過去記録一覧</h3>
+            <a href="{{ route('teacher.home') }}"
+              class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+              ホームに戻る
+            </a>
+          </div>
 
           @if ($entries->total() > 0)
             <div class="mb-4 text-sm text-gray-600">
@@ -84,7 +90,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">提出日時
                     </th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">体調</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">精神</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メンタル</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                   </tr>
                 </thead>
@@ -113,7 +119,7 @@
                         </span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <a href="{{ route('teacher.entries.show', $entry) }}"
+                        <a href="{{ route('teacher.entries.show', ['entry' => $entry, 'from' => 'past']) }}"
                           class="inline-flex items-center px-3 py-1.5 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                           詳細
                         </a>
