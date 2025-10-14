@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('grade')->comment('学年（1〜3）');
-            $table->string('class_name', 10)->comment('クラス名（A, B）');
+            $table->string('class_name', 10)->collation('utf8mb4_bin')->comment('クラス名（A, B）'); // クラス名の大文字・小文字を区別するためにバイナリ照合順序を指定
             $table->timestamps();
 
             // 同じ学年に同じクラス名は存在しない

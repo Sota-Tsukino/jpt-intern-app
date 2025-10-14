@@ -6,6 +6,8 @@ use App\Http\Controllers\Student\EntryController as StudentEntryController;
 use App\Http\Controllers\Teacher\HomeController as TeacherHomeController;
 use App\Http\Controllers\Teacher\EntryController as TeacherEntryController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
+use App\Http\Controllers\Admin\ClassController as AdminClassController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -44,6 +46,19 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
 // 管理者用ルート
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/home', [AdminHomeController::class, 'index'])->name('home');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
+    Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user}', [AdminUserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/users/{user}/reset-password', [AdminUserController::class, 'resetPassword'])->name('users.resetPassword');
+    Route::get('/classes', [AdminClassController::class, 'index'])->name('classes.index');
+    Route::get('/classes/create', [AdminClassController::class, 'create'])->name('classes.create');
+    Route::post('/classes', [AdminClassController::class, 'store'])->name('classes.store');
+    Route::get('/classes/{class}/edit', [AdminClassController::class, 'edit'])->name('classes.edit');
+    Route::put('/classes/{class}', [AdminClassController::class, 'update'])->name('classes.update');
+    Route::delete('/classes/{class}', [AdminClassController::class, 'destroy'])->name('classes.destroy');
 });
 
 Route::middleware('auth')->group(function () {
