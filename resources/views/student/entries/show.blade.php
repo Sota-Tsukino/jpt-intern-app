@@ -10,18 +10,6 @@
           {{ \Carbon\Carbon::now()->format('Y年m月d日（' . ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::now()->dayOfWeek] . '）') }}
         </div>
       </div>
-      <div class="flex gap-2">
-        @if (!$entry->is_read)
-          <a href="{{ route('student.entries.edit', $entry) }}"
-            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-            編集
-          </a>
-        @endif
-        <a href="{{ route('student.home') }}"
-          class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-          一覧に戻る
-        </a>
-      </div>
     </div>
   </x-slot>
 
@@ -61,54 +49,38 @@
                 </p>
               </div>
 
-              <!-- 体調 -->
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">体調</label>
-                <div class="flex items-center">
-                  <span
-                    class="text-2xl font-bold {{ $entry->health_status >= 4 ? 'text-green-600' : ($entry->health_status === 3 ? 'text-yellow-600' : 'text-red-600') }}">
-                    {{ $entry->health_status }}
-                  </span>
-                  <span class="ml-2 text-sm text-gray-600">
-                    / 5
-                    @if ($entry->health_status === 5)
-                      （良好）
-                    @elseif($entry->health_status === 4)
-                      （良い）
-                    @elseif($entry->health_status === 3)
-                      （普通）
-                    @elseif($entry->health_status === 2)
-                      （悪い）
-                    @else
-                      （最悪）
-                    @endif
-                  </span>
-                </div>
-              </div>
+            </div>
+          </div>
 
-              <!-- メンタル -->
+          <!-- 体調・メンタル -->
+          <div class="mb-6 pb-6 border-b border-gray-200">
+            <!-- 体調 -->
+            <div class="mb-4">
+              <label class="block font-medium text-gray-700 mb-2">体調</label>
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">メンタル</label>
-                <div class="flex items-center">
-                  <span
-                    class="text-2xl font-bold {{ $entry->mental_status >= 4 ? 'text-green-600' : ($entry->mental_status === 3 ? 'text-yellow-600' : 'text-red-600') }}">
-                    {{ $entry->mental_status }}
-                  </span>
-                  <span class="ml-2 text-sm text-gray-600">
-                    / 5
-                    @if ($entry->mental_status === 5)
-                      （良好）
-                    @elseif($entry->mental_status === 4)
-                      （良い）
-                    @elseif($entry->mental_status === 3)
-                      （普通）
-                    @elseif($entry->mental_status === 2)
-                      （悪い）
-                    @else
-                      （最悪）
-                    @endif
-                  </span>
-                </div>
+                <span
+                  class="text-lg font-semibold
+                  @if ($entry->health_status <= 2) text-red-600
+                  @elseif ($entry->health_status == 3) text-yellow-600
+                  @else text-green-600 @endif
+                ">
+                  {{ $entry->health_status }}.{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->health_status] }}
+                </span>
+              </div>
+            </div>
+
+            <!-- メンタル -->
+            <div>
+              <label class="block font-medium text-gray-700 mb-2">メンタル</label>
+              <div>
+                <span
+                  class="text-lg font-semibold
+                  @if ($entry->mental_status <= 2) text-red-600
+                  @elseif ($entry->mental_status == 3) text-yellow-600
+                  @else text-green-600 @endif
+                ">
+                  {{ $entry->mental_status }}.{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->mental_status] }}
+                </span>
               </div>
             </div>
           </div>
@@ -142,11 +114,7 @@
             @if ($entry->is_read)
               <div class="bg-green-50 rounded-lg p-4 border border-green-200">
                 <div class="flex items-center mb-2">
-                  <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clip-rule="evenodd" />
-                  </svg>
+                  <span class="text-2xl mr-2">👍</span>
                   <span class="text-green-800 font-semibold">既読</span>
                 </div>
                 <p class="text-sm text-gray-700">
@@ -173,8 +141,20 @@
               </div>
             @endif
           </div>
-
+          <div class="flex gap-2 mt-6">
+            @if (!$entry->is_read)
+              <a href="{{ route('student.entries.edit', $entry) }}"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                編集
+              </a>
+            @endif
+            <a href="{{ route('student.home') }}"
+              class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+              一覧に戻る
+            </a>
+          </div>
         </div>
+
       </div>
     </div>
   </div>

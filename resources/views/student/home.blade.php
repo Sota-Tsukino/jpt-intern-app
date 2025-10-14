@@ -13,13 +13,6 @@
 
   <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <!-- 新規登録ボタン -->
-      <div class="mb-6">
-        <a href="{{ route('student.entries.create') }}"
-          class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-          新規登録
-        </a>
-      </div>
 
       <!-- 絞り込み・ソートフォーム -->
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
@@ -71,6 +64,18 @@
       <!-- 連絡帳一覧 -->
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">連絡帳一覧</h3>
+
+            <!-- 新規登録ボタン -->
+            <div class="mb-6">
+              <a href="{{ route('student.entries.create') }}"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                新規登録
+              </a>
+            </div>
+
+          </div>
           <!-- 表示件数 -->
           @if ($entries->total() > 0)
             <div class="mb-4 text-sm text-gray-600">
@@ -88,7 +93,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">提出日時</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">体調</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メンタル</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">既読</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">既読状況</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
                   </tr>
                 </thead>
@@ -101,21 +106,35 @@
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {{ \Carbon\Carbon::parse($entry->submitted_at)->format('Y/m/d H:i') }}
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $entry->health_status }}
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span
+                          class="font-semibold
+                          @if ($entry->health_status <= 2) text-red-600
+                          @elseif ($entry->health_status == 3) text-yellow-600
+                          @else text-green-600 @endif
+                        ">
+                          {{ $entry->health_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->health_status] }}
+                        </span>
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $entry->mental_status }}
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span
+                          class="font-semibold
+                          @if ($entry->mental_status <= 2) text-red-600
+                          @elseif ($entry->mental_status == 3) text-yellow-600
+                          @else text-green-600 @endif
+                        ">
+                          {{ $entry->mental_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->mental_status] }}
+                        </span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
                         @if ($entry->is_read)
                           <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            既読
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                            👍既読
                           </span>
                         @else
                           <span
-                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
                             未読
                           </span>
                         @endif
