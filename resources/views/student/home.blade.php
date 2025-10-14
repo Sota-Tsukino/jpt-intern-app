@@ -101,11 +101,25 @@
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {{ \Carbon\Carbon::parse($entry->submitted_at)->format('Y/m/d H:i') }}
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $entry->health_status }}
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="font-semibold
+                          @if ($entry->health_status <= 2) text-red-600
+                          @elseif ($entry->health_status == 3) text-yellow-600
+                          @else text-green-600
+                          @endif
+                        ">
+                          {{ $entry->health_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->health_status] }}
+                        </span>
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {{ $entry->mental_status }}
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="font-semibold
+                          @if ($entry->mental_status <= 2) text-red-600
+                          @elseif ($entry->mental_status == 3) text-yellow-600
+                          @else text-green-600
+                          @endif
+                        ">
+                          {{ $entry->mental_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->mental_status] }}
+                        </span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
                         @if ($entry->is_read)
