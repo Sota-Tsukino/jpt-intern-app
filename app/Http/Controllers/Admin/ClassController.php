@@ -46,23 +46,27 @@ class ClassController extends Controller
     {
         $validated = $request->validate([
             'grade' => 'required|integer|min:1|max:3',
-            'class_name' => [
-                'required',
-                'string',
-                'max:10',
-                Rule::unique('classes')->where(function ($query) use ($request) {
-                    return $query->where('grade', $request->grade);
-                }),
-            ],
+            'class_name' => 'required|string|max:10',
             'teacher_id' => 'nullable|exists:users,id',
         ], [
             'grade.required' => '学年は必須です。',
             'grade.min' => '学年は1以上を指定してください。',
             'grade.max' => '学年は3以下を指定してください。',
             'class_name.required' => 'クラス名は必須です。',
-            'class_name.unique' => 'この学年・クラス名の組み合わせは既に登録されています。',
             'teacher_id.exists' => '指定された担任が存在しません。',
         ]);
+
+        // 学年とクラス名の組み合わせで重複チェック（大文字小文字を区別）
+        // データベースのcollation設定（utf8mb4_bin）により大文字小文字が区別される
+        $exists = ClassModel::where('grade', $validated['grade'])
+            ->where('class_name', $validated['class_name'])
+            ->exists();
+
+        if ($exists) {
+            return back()
+                ->withInput()
+                ->withErrors(['class_name' => 'この学年・クラス名の組み合わせは既に登録されています。']);
+        }
 
         // クラスを作成
         $class = ClassModel::create([
@@ -107,23 +111,29 @@ class ClassController extends Controller
     {
         $validated = $request->validate([
             'grade' => 'required|integer|min:1|max:3',
-            'class_name' => [
-                'required',
-                'string',
-                'max:10',
-                Rule::unique('classes')->where(function ($query) use ($request) {
-                    return $query->where('grade', $request->grade);
-                })->ignore($class->id),// ignore()で現在編集しているクラスidを除外(重複チェックから除外)
-            ],
+            'class_name' => 'required|string|max:10',
             'teacher_id' => 'nullable|exists:users,id',
         ], [
             'grade.required' => '学年は必須です。',
             'grade.min' => '学年は1以上を指定してください。',
             'grade.max' => '学年は3以下を指定してください。',
             'class_name.required' => 'クラス名は必須です。',
-            'class_name.unique' => 'この学年・クラス名の組み合わせは既に登録されています。',
             'teacher_id.exists' => '指定された担任が存在しません。',
         ]);
+
+        
+        // 学年とクラス名の組み合わせで重複チェック（大文字小文字を区別、現在のクラスは除外）
+        // データベースのcollation設定（utf8mb4_bin）により大文字小文字が区別される
+        $exists = ClassModel::where('grade', $validated['grade'])
+            ->where('class_name', $validated['class_name'])
+            ->where('id', '!=', $class->id)
+            ->exists();
+
+        if ($exists) {
+            return back()
+                ->withInput()
+                ->withErrors(['class_name' => 'この学年・クラス名の組み合わせは既に登録されています。']);
+        }
 
         // 現在の担任をクリア
         if ($class->teacher) {
