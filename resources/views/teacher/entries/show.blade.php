@@ -1,12 +1,14 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('連絡帳詳細') }}
-      </h2>
-      <div class="text-sm text-gray-600">
-        <span class="font-medium">今日:</span>
-        {{ \Carbon\Carbon::now()->format('Y年m月d日') }}（{{ ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::now()->dayOfWeek] }}）
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+      <div>
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+          {{ __('連絡帳詳細') }}
+        </h2>
+        <div class="text-sm text-gray-600 mt-1">
+          <span class="font-medium">今日:</span>
+          {{ \Carbon\Carbon::now()->format('Y年m月d日') }}（{{ ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::now()->dayOfWeek] }}）
+        </div>
       </div>
     </div>
   </x-slot>
@@ -28,33 +30,41 @@
 
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
-          <!-- 生徒情報 -->
-          <div class="mb-6 pb-4 border-b">
-            <h3 class="text-lg font-semibold mb-2">生徒情報</h3>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <span class="font-medium">氏名:</span>
-                <span class="ml-2">{{ $entry->user->name }}</span>
-              </div>
-              <div>
-                <span class="font-medium">学年/クラス:</span>
-                <span class="ml-2">{{ $entry->user->class->grade }}年{{ $entry->user->class->class_name }}組</span>
-              </div>
-            </div>
-          </div>
 
-          <!-- 連絡帳情報 -->
-          <div class="mb-6 pb-4 border-b">
-            <h3 class="text-lg font-semibold mb-2">連絡帳情報</h3>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <span class="font-medium">記録対象日:</span>
-                <span class="ml-2">{{ \Carbon\Carbon::parse($entry->entry_date)->format('Y年m月d日') }}</span>
-              </div>
-              <div>
-                <span class="font-medium">提出日時:</span>
-                <span class="ml-2">{{ \Carbon\Carbon::parse($entry->submitted_at)->format('Y年m月d日 H:i') }}</span>
-              </div>
+          <!-- 基本情報 -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 pb-6 border-b">
+            <!-- 生徒氏名 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">生徒氏名</label>
+              <p class="text-lg text-gray-900">{{ $entry->user->name }}</p>
+            </div>
+
+            <!-- 所属学年・クラス -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">学年・クラス</label>
+              <p class="text-lg text-gray-900">
+                @if ($entry->user->class)
+                  {{ $entry->user->class->grade }}年{{ $entry->user->class->class_name }}組
+                @else
+                  <span class="text-gray-400">未配置</span>
+                @endif
+              </p>
+            </div>
+
+            <!-- 記録対象日 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">記録対象日</label>
+              <p class="text-lg text-gray-900">
+                {{ \Carbon\Carbon::parse($entry->entry_date)->format('Y年m月d日') }}
+              </p>
+            </div>
+
+            <!-- 提出日時 -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">提出日時</label>
+              <p class="text-lg text-gray-900">
+                {{ \Carbon\Carbon::parse($entry->submitted_at)->format('Y年m月d日 H:i') }}
+              </p>
             </div>
           </div>
 
@@ -88,17 +98,17 @@
             </div>
           </div>
 
-          <!-- 学習の振り返り -->
+          <!-- 授業振り返り -->
           <div class="mb-4">
-            <label class="block font-medium text-gray-700 mb-2">学習の振り返り</label>
+            <label class="block font-medium text-gray-700 mb-2">授業振り返り</label>
             <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <p class="text-gray-900 whitespace-pre-wrap">{{ $entry->study_reflection }}</p>
             </div>
           </div>
 
-          <!-- 部活動の振り返り -->
+          <!-- 部活振り返り -->
           <div class="mb-6">
-            <label class="block font-medium text-gray-700 mb-2">部活動の振り返り</label>
+            <label class="block font-medium text-gray-700 mb-2">部活振り返り</label>
             <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
               @if ($entry->club_reflection)
                 <p class="text-gray-900 whitespace-pre-wrap">{{ $entry->club_reflection }}</p>
@@ -109,28 +119,29 @@
           </div>
 
           <!-- 既読ステータス -->
-          <div class="mb-6 pb-4 border-t pt-4">
-            <div class="flex items-center gap-2 mb-2">
-              <span class="font-medium text-gray-700">既読ステータス:</span>
-              @if ($entry->is_read)
-                <div class="flex items-center gap-2">
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-lg font-medium bg-green-100 text-green-800">
-                    既読済み👍
-                  </span>
-                  <span class="text-2xl"></span>
+          <div class="mb-6 pb-6 border-t pt-6">
+            @if ($entry->is_read)
+              <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                <div class="flex items-center mb-2">
+                  <span class="text-2xl mr-2">👍</span>
+                  <span class="text-green-800 font-semibold">既読</span>
                 </div>
-              @else
-                <span
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-lg font-medium bg-gray-100 text-gray-800">
-                  未読
-                </span>
-              @endif
-            </div>
-            @if ($entry->is_read && $entry->read_at)
-              <div class="text-sm text-gray-600">
-                <span class="font-medium">既読日時:</span>
-                <span class="ml-2">{{ \Carbon\Carbon::parse($entry->read_at)->format('Y年m月d日 H:i') }}</span>
+                @if ($entry->read_at)
+                  <p class="text-sm text-green-700">
+                    既読日時: {{ \Carbon\Carbon::parse($entry->read_at)->format('Y年m月d日 H:i') }}
+                  </p>
+                @endif
+              </div>
+            @else
+              <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <div class="flex items-center">
+                  <svg class="w-5 h-5 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clip-rule="evenodd" />
+                  </svg>
+                  <span class="text-gray-600">未読</span>
+                </div>
               </div>
             @endif
           </div>
