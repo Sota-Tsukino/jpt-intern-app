@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ url('/') }}">
+                    <a href="@if(Auth::user()->role === 'student'){{ route('student.home') }}@elseif(Auth::user()->role === 'teacher'){{ route('teacher.home') }}@elseif(Auth::user()->role === 'admin'){{ route('admin.home') }}@endif">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
