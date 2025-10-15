@@ -109,13 +109,13 @@
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <span
                           class="font-semibold {{ $entry->health_status >= 4 ? 'text-green-600' : ($entry->health_status === 3 ? 'text-yellow-600' : 'text-red-600') }}">
-                          {{ $entry->health_status }}
+                          {{ $entry->health_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->health_status] }}
                         </span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <span
                           class="font-semibold {{ $entry->mental_status >= 4 ? 'text-green-600' : ($entry->mental_status === 3 ? 'text-yellow-600' : 'text-red-600') }}">
-                          {{ $entry->mental_status }}
+                          {{ $entry->mental_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$entry->mental_status] }}
                         </span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
