@@ -100,8 +100,8 @@
                         @if ($student->todayEntry)
                           @if ($student->todayEntry->is_read)
                             <span
-                              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              既読
+                              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              👍既読
                             </span>
                           @else
                             <span
@@ -120,21 +120,21 @@
                           <span class="text-gray-400">-</span>
                         @endif
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-900">
                         @if ($student->todayEntry)
                           <span
                             class="font-semibold {{ $student->todayEntry->health_status >= 4 ? 'text-green-600' : ($student->todayEntry->health_status === 3 ? 'text-yellow-600' : 'text-red-600') }}">
-                            {{ $student->todayEntry->health_status }}
+                            {{ $student->todayEntry->health_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$student->todayEntry->health_status] }}
                           </span>
                         @else
                           <span class="text-gray-400">-</span>
                         @endif
                       </td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-900">
                         @if ($student->todayEntry)
                           <span
                             class="font-semibold {{ $student->todayEntry->mental_status >= 4 ? 'text-green-600' : ($student->todayEntry->mental_status === 3 ? 'text-yellow-600' : 'text-red-600') }}">
-                            {{ $student->todayEntry->mental_status }}
+                            {{ $student->todayEntry->mental_status }}:{{ ['', 'とても悪い', '悪い', '普通', '良い', 'とても良い'][$student->todayEntry->mental_status] }}
                           </span>
                         @else
                           <span class="text-gray-400">-</span>
@@ -142,7 +142,7 @@
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         @if ($student->todayEntry)
-                          <a href="{{ route('teacher.entries.show', $student->todayEntry) }}"
+                          <a href="{{ route('teacher.entries.show', ['entry' => $student->todayEntry, 'from' => 'home']) }}"
                             class="inline-flex items-center px-3 py-1.5 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                             詳細
                           </a>
