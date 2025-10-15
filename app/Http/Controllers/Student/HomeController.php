@@ -15,6 +15,20 @@ class HomeController extends Controller
     {
         $user = $request->user();
 
+        // 今日の日付
+        $today = now();
+
+        // 前登校日を計算（土日を除く前日）
+        $previousSchoolDay = clone $today;
+        do {
+            $previousSchoolDay->subDay();
+        } while ($previousSchoolDay->isWeekend());
+
+        $targetDate = $previousSchoolDay->format('Y-m-d');
+
+        // 本日提出すべき連絡帳（前登校日分）の提出状況を確認
+        $todayEntry = $user->entries()->where('entry_date', $targetDate)->first();
+
         // クエリビルダーを開始
         $query = $user->entries();
 
@@ -33,6 +47,6 @@ class HomeController extends Controller
         // ページネーション
         $entries = $query->paginate(20)->withQueryString();
 
-        return view('student.home', compact('entries'));
+        return view('student.home', compact('entries', 'todayEntry', 'targetDate'));
     }
 }

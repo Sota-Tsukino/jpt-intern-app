@@ -21,13 +21,21 @@
           <form method="POST" action="{{ route('student.entries.store') }}">
             @csrf
 
-            <!-- 記録対象日（表示のみ） -->
+            <!-- 記録対象日 -->
             <div class="mb-6">
-              <label class="block text-sm font-medium text-gray-700 mb-2">記録対象日</label>
-              <p class="text-lg font-semibold text-gray-900">
-                {{ \Carbon\Carbon::parse($entryDate)->format('Y年m月d日（' . ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::parse($entryDate)->dayOfWeek] . '）') }}
+              <label for="entry_date" class="block text-sm font-medium text-gray-700 mb-2">
+                記録対象日 <span class="text-red-600">*</span>
+              </label>
+              <input type="date" name="entry_date" id="entry_date"
+                value="{{ old('entry_date', $defaultEntryDate) }}"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                required>
+              <p class="text-sm text-gray-500 mt-1">
+                ※デフォルトは前登校日（土日除く）が設定されています。必要に応じて変更できます。
               </p>
-              <p class="text-sm text-gray-500 mt-1">※記録対象日は前登校日です（土日は自動的にスキップされます）</p>
+              @error('entry_date')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+              @enderror
             </div>
 
             <!-- 体調 -->
