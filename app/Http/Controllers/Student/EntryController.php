@@ -14,25 +14,12 @@ class EntryController extends Controller
     /**
      * 連絡帳新規登録画面を表示
      */
-    public function create(Request $request): View|RedirectResponse
+    public function create(Request $request): View
     {
-        $user = $request->user();
+        // 記録対象日を計算（前登校日）をデフォルトとして設定
+        $defaultEntryDate = $this->calculateEntryDate();
 
-        // 記録対象日を計算（前登校日）
-        $entryDate = $this->calculateEntryDate();
-
-        // 同じ記録対象日の連絡帳が既に存在するかチェック
-        $existingEntry = Entry::where('user_id', $user->id)
-            ->where('entry_date', $entryDate)
-            ->first();
-
-        if ($existingEntry) {
-            return redirect()
-                ->route('student.entries.show', $existingEntry)
-                ->with('error', 'この記録対象日の連絡帳は既に登録されています。');
-        }
-
-        return view('student.entries.create', compact('entryDate'));
+        return view('student.entries.create', compact('defaultEntryDate'));
     }
 
     /**
@@ -42,12 +29,21 @@ class EntryController extends Controller
     {
         $user = $request->user();
 
-        // 記録対象日を計算
-        $entryDate = $this->calculateEntryDate();
+        // バリデーション
+        $validated = $request->validate([
+            'entry_date' => 'required|date',
+            'health_status' => 'required|integer|min:1|max:5',
+            'mental_status' => 'required|integer|min:1|max:5',
+            'study_reflection' => 'required|string|max:500',
+            'club_reflection' => 'nullable|string|max:500',
+        ], [
+            'entry_date.required' => '記録対象日は必須です。',
+            'entry_date.date' => '記録対象日は日付形式で入力してください。',
+        ]);
 
         // 同じ記録対象日の連絡帳が既に存在するかチェック
         $existingEntry = Entry::where('user_id', $user->id)
-            ->where('entry_date', $entryDate)
+            ->where('entry_date', $validated['entry_date'])
             ->first();
 
         if ($existingEntry) {
@@ -56,18 +52,10 @@ class EntryController extends Controller
                 ->with('error', 'この記録対象日の連絡帳は既に登録されています。');
         }
 
-        // バリデーション
-        $validated = $request->validate([
-            'health_status' => 'required|integer|min:1|max:5',
-            'mental_status' => 'required|integer|min:1|max:5',
-            'study_reflection' => 'required|string|max:500',
-            'club_reflection' => 'nullable|string|max:500',
-        ]);
-
         // 新規作成
         $entry = Entry::create([
             'user_id' => $user->id,
-            'entry_date' => $entryDate,
+            'entry_date' => $validated['entry_date'],
             'submitted_at' => now(),
             'health_status' => $validated['health_status'],
             'mental_status' => $validated['mental_status'],
