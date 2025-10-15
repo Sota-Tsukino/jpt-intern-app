@@ -129,8 +129,8 @@
                         / {{ Auth::user()->class->grade }}年{{ Auth::user()->class->class_name }}組
                     @endif
                 </div>
-                <div class="text-sm text-gray-500 mt-1">
-                    {{ \Carbon\Carbon::now()->format('Y年m月d日') }}
+                <div class="text-sm text-gray-500 font-medium mt-1">
+                    今日：{{ \Carbon\Carbon::now()->format('Y年m月d日（' . ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::now()->dayOfWeek] . '）') }}
                 </div>
             </div>
 
