@@ -1,21 +1,15 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-      <div>
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-          過去記録一覧
-        </h2>
-        @if ($teacher->class)
-          <div class="text-sm text-gray-600 mt-1">
-            <span class="font-medium">担当:</span>
-            {{ $teacher->class->grade }}年{{ $teacher->class->class_name }}組
-          </div>
-        @endif
-      </div>
-      <div class="text-sm text-gray-600">
-        <span class="font-medium">今日:</span>
-        {{ \Carbon\Carbon::now()->format('Y年m月d日（' . ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::now()->dayOfWeek] . '）') }}
-      </div>
+    <div>
+      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        過去記録一覧
+      </h2>
+      @if ($teacher->class)
+        <div class="text-sm text-gray-600 mt-1">
+          <span class="font-medium">担当:</span>
+          {{ $teacher->class->grade }}年{{ $teacher->class->class_name }}組
+        </div>
+      @endif
     </div>
   </x-slot>
 

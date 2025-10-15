@@ -1,14 +1,8 @@
 <x-app-layout>
   <x-slot name="header">
-    <div class="flex justify-between items-center">
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        連絡帳一覧
-      </h2>
-      <div class="text-sm text-gray-600">
-        <span class="font-medium">今日:</span>
-        {{ \Carbon\Carbon::now()->format('Y年m月d日（' . ['日', '月', '火', '水', '木', '金', '土'][\Carbon\Carbon::now()->dayOfWeek] . '）') }}
-      </div>
-    </div>
+    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+      連絡帳一覧
+    </h2>
   </x-slot>
 
   <div class="py-12">
