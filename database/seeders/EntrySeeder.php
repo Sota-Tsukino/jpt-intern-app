@@ -18,27 +18,40 @@ class EntrySeeder extends Seeder
         // 生徒のみを取得
         $students = User::where('role', 'student')->get();
 
-        // 各生徒に3件の連絡帳を作成
+        // 最初の1人だけ1か月分（30件）、残りは3件ずつ
+        $isFirstStudent = true;
+
         foreach ($students as $student) {
             // 担任を取得（同じクラスの教師）
             $teacher = User::where('role', 'teacher')
                 ->where('class_id', $student->class_id)
                 ->first();
 
-            for ($i = 0; $i < 3; $i++) {
+            // 最初の生徒は30件、それ以外は3件
+            $entryCount = $isFirstStudent ? 30 : 3;
+            $isFirstStudent = false;
+
+            // 記録対象日の開始日を設定（30件の場合は約1.5か月前、3件の場合は10日前）
+            $startDaysAgo = $entryCount === 30 ? 45 : 10;
+
+            $createdEntries = 0;
+            $currentDay = 0;
+
+            while ($createdEntries < $entryCount) {
                 // 記録対象日（過去の日付）
-                $entryDate = Carbon::now()->subDays(10 - ($i * 3));
+                $entryDate = Carbon::now()->subDays($startDaysAgo - $currentDay);
+                $currentDay++;
 
                 // 土日をスキップ
-                while ($entryDate->isWeekend()) {
-                    $entryDate->subDay();
+                if ($entryDate->isWeekend()) {
+                    continue;
                 }
 
                 // 提出日時（記録対象日の翌日）
                 $submittedAt = (clone $entryDate)->addDay()->setTime(8, rand(0, 59), rand(0, 59));
 
-                // 既読フラグ（ランダムで一部既読にする）
-                $isRead = $i < 2; // 最初の2件は既読、最新は未読
+                // 既読フラグ（最新2件以外は既読にする）
+                $isRead = $createdEntries < ($entryCount - 2);
                 $readAt = $isRead ? (clone $submittedAt)->addHours(rand(1, 5)) : null;
                 $readBy = $isRead && $teacher ? $teacher->id : null;
 
@@ -54,6 +67,8 @@ class EntrySeeder extends Seeder
                     'read_at' => $readAt,
                     'read_by' => $readBy,
                 ]);
+
+                $createdEntries++;
             }
         }
     }
