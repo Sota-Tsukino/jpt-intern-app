@@ -163,7 +163,7 @@
             </div>
 
             @if (!$entry->is_read)
-              <form method="POST" action="{{ route('teacher.entries.markAsRead', $entry) }}">
+              <form method="POST" action="{{ route('teacher.entries.markAsRead', $entry) }}{{ request('from') ? '?from=' . request('from') : '' }}">
                 @csrf
                 @method('PATCH')
                 <button type="submit"
