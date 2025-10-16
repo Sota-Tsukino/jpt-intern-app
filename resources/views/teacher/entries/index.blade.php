@@ -20,7 +20,18 @@
         <div class="p-6">
           <h3 class="text-lg font-semibold text-gray-900 mb-4">絞り込み検索</h3>
           <form method="GET" action="{{ route('teacher.entries.index') }}">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+              <!-- 既読ステータス -->
+              <div>
+                <label for="read_status" class="block text-sm font-medium text-gray-700 mb-1">既読ステータス</label>
+                <select name="read_status" id="read_status"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                  <option value="read" {{ request('read_status', 'read') === 'read' ? 'selected' : '' }}>既読のみ</option>
+                  <option value="unread" {{ request('read_status') === 'unread' ? 'selected' : '' }}>未読のみ</option>
+                  <option value="all" {{ request('read_status') === 'all' ? 'selected' : '' }}>全て</option>
+                </select>
+              </div>
+
               <!-- 生徒名 -->
               <div>
                 <label for="student_name" class="block text-sm font-medium text-gray-700 mb-1">生徒名</label>
@@ -83,6 +94,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">生徒名</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">提出日時
                     </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">既読状況</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">体調</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">メンタル</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
@@ -99,6 +111,19 @@
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {{ \Carbon\Carbon::parse($entry->submitted_at)->format('Y/m/d H:i') }}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        @if ($entry->is_read)
+                          <span
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            👍既読
+                          </span>
+                        @else
+                          <span
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                            未読
+                          </span>
+                        @endif
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <span

@@ -12,17 +12,34 @@ use Carbon\Carbon;
 class EntryController extends Controller
 {
     /**
-     * 過去の連絡帳一覧を表示（既読済みのみ）
+     * 過去の連絡帳一覧を表示（今日の記録対象日以外）
      */
     public function index(Request $request): View
     {
         $teacher = $request->user();
         $teacher->load('class');
 
-        // 担当クラスの生徒の既読済み連絡帳を取得
+        // 今日の記録対象日（前登校日）を計算
+        $today = Carbon::now();
+        $previousSchoolDay = clone $today;
+        do {
+            $previousSchoolDay->subDay();
+        } while ($previousSchoolDay->isWeekend());
+        $targetDate = $previousSchoolDay->format('Y-m-d');
+
+        // 担当クラスの生徒の連絡帳を取得（今日の記録対象日以外）
         $query = Entry::whereHas('user', function ($q) use ($teacher) {
             $q->where('class_id', $teacher->class_id);
-        })->where('is_read', true)->with(['user']);
+        })->where('entry_date', '!=', $targetDate)->with(['user']);
+
+        // 既読ステータスで絞り込み（デフォルトは既読済みのみ）
+        $readStatus = $request->get('read_status', 'read'); // デフォルト: read（既読のみ）
+        if ($readStatus === 'read') {
+            $query->where('is_read', true);
+        } elseif ($readStatus === 'unread') {
+            $query->where('is_read', false);
+        }
+        // 'all' の場合は絞り込みなし
 
         // 生徒名で絞り込み
         if ($request->filled('student_name')) {
@@ -82,8 +99,11 @@ class EntryController extends Controller
 
         // 既に既読済みかチェック
         if ($entry->is_read) {
-            return redirect()
-                ->route('teacher.entries.show', $entry)
+            $redirectUrl = route('teacher.entries.show', $entry);
+            if ($request->has('from')) {
+                $redirectUrl .= '?from=' . $request->get('from');
+            }
+            return redirect($redirectUrl)
                 ->with('error', 'この連絡帳は既に既読済みです。');
         }
 
@@ -94,8 +114,12 @@ class EntryController extends Controller
             'read_by' => $teacher->id,
         ]);
 
-        return redirect()
-            ->route('teacher.entries.show', $entry)
+        $redirectUrl = route('teacher.entries.show', $entry);
+        if ($request->has('from')) {
+            $redirectUrl .= '?from=' . $request->get('from');
+        }
+
+        return redirect($redirectUrl)
             ->with('success', '連絡帳を既読にしました。');
     }
 }
