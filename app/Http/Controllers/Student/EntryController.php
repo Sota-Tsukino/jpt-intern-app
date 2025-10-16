@@ -39,6 +39,17 @@ class EntryController extends Controller
         ], [
             'entry_date.required' => '記録対象日は必須です。',
             'entry_date.date' => '記録対象日は日付形式で入力してください。',
+            'health_status.required' => '体調は必須です。',
+            'health_status.integer' => '体調は整数で入力してください。',
+            'health_status.min' => '体調は1以上を選択してください。',
+            'health_status.max' => '体調は5以下を選択してください。',
+            'mental_status.required' => 'メンタルは必須です。',
+            'mental_status.integer' => 'メンタルは整数で入力してください。',
+            'mental_status.min' => 'メンタルは1以上を選択してください。',
+            'mental_status.max' => 'メンタルは5以下を選択してください。',
+            'study_reflection.required' => '授業振り返りは必須です。',
+            'study_reflection.max' => '授業振り返りは500文字以内で入力してください。',
+            'club_reflection.max' => '部活振り返りは500文字以内で入力してください。',
         ]);
 
         // 同じ記録対象日の連絡帳が既に存在するかチェック
@@ -149,6 +160,18 @@ class EntryController extends Controller
             'mental_status' => 'required|integer|min:1|max:5',
             'study_reflection' => 'required|string|max:500',
             'club_reflection' => 'nullable|string|max:500',
+        ], [
+            'health_status.required' => '体調は必須です。',
+            'health_status.integer' => '体調は整数で入力してください。',
+            'health_status.min' => '体調は1以上を選択してください。',
+            'health_status.max' => '体調は5以下を選択してください。',
+            'mental_status.required' => 'メンタルは必須です。',
+            'mental_status.integer' => 'メンタルは整数で入力してください。',
+            'mental_status.min' => 'メンタルは1以上を選択してください。',
+            'mental_status.max' => 'メンタルは5以下を選択してください。',
+            'study_reflection.required' => '授業振り返りは必須です。',
+            'study_reflection.max' => '授業振り返りは500文字以内で入力してください。',
+            'club_reflection.max' => '部活振り返りは500文字以内で入力してください。',
         ]);
 
         // 更新
