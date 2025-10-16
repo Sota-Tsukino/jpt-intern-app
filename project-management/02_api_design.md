@@ -5,11 +5,11 @@
 ### 1.1 ロール別画面数
 | ロール | 画面数 | 備考 |
 |--------|-------|------|
-| 共通（認証） | 3画面 | Breeze標準 |
+| 共通（認証） | 1画面 | ログインのみ（パスワードリセット機能は非表示） |
 | 生徒 | 4画面 | 連絡帳の登録・閲覧 |
-| 担任 | 5画面 | 提出状況確認・既読処理 |
+| 担任 | 3画面 | 提出状況確認・既読処理 |
 | 管理者 | 7画面 | ユーザー・クラス管理 |
-| **合計** | **19画面** | |
+| **合計** | **15画面** | |
 
 ---
 
@@ -18,13 +18,9 @@
 ### 2.1 認証関連（Breeze標準）
 | メソッド | URI | 名前 | 説明 |
 |---------|-----|------|------|
-| GET | /login | login | ログイン画面 |
+| GET | /login | login | ログイン画面（パスワードリセットリンク非表示） |
 | POST | /login | - | ログイン処理 |
 | POST | /logout | logout | ログアウト |
-| GET | /forgot-password | password.request | パスワードリセット申請 |
-| POST | /forgot-password | password.email | リセットメール送信 |
-| GET | /reset-password/{token} | password.reset | パスワード再設定 |
-| POST | /reset-password | password.update | パスワード更新 |
 
 ---
 
@@ -43,10 +39,10 @@
 ### 2.3 担任機能
 | メソッド | URI | 名前 | 説明 |
 |---------|-----|------|------|
-| GET | /teacher/home | teacher.home | 担任ホーム（提出状況） |
+| GET | /teacher/home | teacher.home | 担任ホーム（提出状況 + 本日の提出状況一覧） |
 | GET | /teacher/entries/{id} | teacher.entries.show | 連絡帳詳細 |
-| POST | /teacher/entries/{id}/read | teacher.entries.markAsRead | 既読処理 |
-| GET | /teacher/entries | teacher.entries.index | 過去記録一覧 |
+| PATCH | /teacher/entries/{id}/mark-as-read | teacher.entries.markAsRead | 既読処理 |
+| GET | /teacher/entries | teacher.entries.index | 過去記録一覧（絞り込み検索機能付き） |
 
 ---
 
@@ -181,10 +177,25 @@ public function store(LoginRequest $request)
 ### 6.1 連絡帳登録
 ```php
 $request->validate([
-    'health_status' => 'required|integer|between:1,5',
-    'mental_status' => 'required|integer|between:1,5',
+    'entry_date' => 'required|date',
+    'health_status' => 'required|integer|min:1|max:5',
+    'mental_status' => 'required|integer|min:1|max:5',
     'study_reflection' => 'required|string|max:500',
     'club_reflection' => 'nullable|string|max:500',
+], [
+    'entry_date.required' => '記録対象日は必須です。',
+    'entry_date.date' => '記録対象日は日付形式で入力してください。',
+    'health_status.required' => '体調は必須です。',
+    'health_status.integer' => '体調は整数で入力してください。',
+    'health_status.min' => '体調は1以上を選択してください。',
+    'health_status.max' => '体調は5以下を選択してください。',
+    'mental_status.required' => 'メンタルは必須です。',
+    'mental_status.integer' => 'メンタルは整数で入力してください。',
+    'mental_status.min' => 'メンタルは1以上を選択してください。',
+    'mental_status.max' => 'メンタルは5以下を選択してください。',
+    'study_reflection.required' => '授業振り返りは必須です。',
+    'study_reflection.max' => '授業振り返りは500文字以内で入力してください。',
+    'club_reflection.max' => '部活振り返りは500文字以内で入力してください。',
 ]);
 ```
 
@@ -232,10 +243,9 @@ return back()->withErrors(['error' => 'エラーメッセージ'])
 
 ### 8.2 担任画面
 
-担任ホーム（提出状況サマリー）
+担任ホーム（提出状況サマリー + 本日の提出状況一覧）
 連絡帳詳細
-過去記録一覧
-過去記録検索結果
+過去記録一覧（絞り込み検索機能付き）
 
 ### 8.3 管理者画面
 
