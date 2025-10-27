@@ -10,25 +10,11 @@ use Illuminate\Support\Facades\Hash;
 class UserSeeder extends Seeder
 {
     /**
-     * 各クラスの生徒数
-     */
-    protected $studentCountPerClass;
-
-    /**
-     * コンストラクタ
-     *
-     * @param int $studentCountPerClass 各クラスの生徒数（デフォルト: 30）
-     */
-    public function __construct($studentCountPerClass = 30)
-    {
-        $this->studentCountPerClass = $studentCountPerClass;
-    }
-
-    /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        $studentCountPerClass = 30;
         // 管理者 × 1
         User::create([
             'name' => '管理者',
@@ -68,7 +54,7 @@ class UserSeeder extends Seeder
 
         foreach ($grades as $grade) {
             foreach ($classes as $class) {
-                for ($i = 1; $i <= $this->studentCountPerClass; $i++) {
+                for ($i = 1; $i <= $studentCountPerClass; $i++) {
                     User::create([
                         'name' => $lastNames[($i - 1) % 30] . $firstNames[($i - 1) % 30],
                         'email' => "student{$grade}{$class}" . str_pad($i, 2, '0', STR_PAD_LEFT) . "@example.com",

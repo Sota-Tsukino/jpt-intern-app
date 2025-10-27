@@ -11,32 +11,12 @@ use Illuminate\Database\Seeder;
 class EntrySeeder extends Seeder
 {
     /**
-     * 最初の生徒のエントリー数
-     */
-    protected $firstStudentEntryCount;
-
-    /**
-     * その他の生徒のエントリー数
-     */
-    protected $otherStudentEntryCount;
-
-    /**
-     * コンストラクタ
-     *
-     * @param int $firstStudentEntryCount 最初の生徒のエントリー数（デフォルト: 30）
-     * @param int $otherStudentEntryCount その他の生徒のエントリー数（デフォルト: 3）
-     */
-    public function __construct($firstStudentEntryCount = 30, $otherStudentEntryCount = 3)
-    {
-        $this->firstStudentEntryCount = $firstStudentEntryCount;
-        $this->otherStudentEntryCount = $otherStudentEntryCount;
-    }
-
-    /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        $firstStudentEntryCount = 30;
+        $otherStudentEntryCount = 3;
         // 生徒のみを取得
         $students = User::where('role', 'student')->get();
 
@@ -50,7 +30,7 @@ class EntrySeeder extends Seeder
                 ->first();
 
             // 最初の生徒は $firstStudentEntryCount 件、それ以外は $otherStudentEntryCount 件
-            $entryCount = $isFirstStudent ? $this->firstStudentEntryCount : $this->otherStudentEntryCount;
+            $entryCount = $isFirstStudent ? $firstStudentEntryCount : $otherStudentEntryCount;
             $isFirstStudent = false;
 
             // 記録対象日の開始日を設定（30件の場合は約1.5か月前、3件の場合は10日前）
