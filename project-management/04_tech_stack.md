@@ -139,13 +139,13 @@ class NotebookPolicy
      */
     public function updateFlag(User $user, Notebook $notebook)
     {
-        // 担任または学年主任のみ
-        if (!in_array($user->role, ['teacher', 'grade_leader'])) {
+        // 担任のみ
+        if ($user->role !== 'teacher') {
             return false;
         }
-        
-        // 同学年のみ
-        return $user->grade_id === $notebook->user->grade_id;
+
+        // 同じクラスの生徒のみ
+        return $user->class_id === $notebook->user->class_id;
     }
 }
 ```

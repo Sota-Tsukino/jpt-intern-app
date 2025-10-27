@@ -58,13 +58,12 @@
 |---------|-----|------|------|
 | GET | /teacher/home | teacher.home | 担任ホーム（提出状況サマリー + 本日の提出状況一覧） |
 | GET | /teacher/notebooks/{id} | teacher.notebooks.show | 連絡帳詳細 |
-| PATCH | /teacher/notebooks/{id}/mark-as-read | teacher.notebooks.markAsRead | 既読処理 |
 | GET | /teacher/notebooks | teacher.notebooks.index | 過去記録一覧（絞り込み検索機能付き） |
 
 #### 課題2追加機能（実装する）
 | メソッド | URI | 名前 | 説明 | 実装 |
 |---------|-----|------|------|------|
-| PATCH | /teacher/notebooks/{id}/stamp | teacher.notebooks.stamp | スタンプ・生徒コメント保存 | ✅ 実装 |
+| PATCH | /teacher/notebooks/{id}/stamp | teacher.notebooks.stamp | スタンプ・生徒コメント保存（既読処理含む） | ✅ 実装 |
 | PATCH | /teacher/notebooks/{id}/flag | teacher.notebooks.updateFlag | フラグ設定・更新 | ✅ 実装 |
 | GET | /teacher/notebooks/flagged | teacher.notebooks.flagged | フラグ付き生徒一覧 | ✅ 実装 |
 | GET | /teacher/students/{id}/progress | teacher.students.progress | 個別生徒推移グラフ | ✅ 実装 |
@@ -157,9 +156,8 @@
 ↓
 内容確認
 ↓
-[既読にする] ボタン
-↓
-担任ホームに戻る（既読完了）
+※課題1では既読処理のみ実装
+※課題2でスタンプと同時に既読処理を行う仕様に変更
 ```
 
 ### 3.4 担任の典型的なフロー（課題2 - 実装：スタンプ・コメント・フラグ）
@@ -416,6 +414,16 @@ $request->validate([
     'stamp_type.required' => 'スタンプは必須です。',
     'stamp_type.in' => '無効なスタンプが選択されています。',
     'teacher_feedback.max' => 'コメントは500文字以内で入力してください。',
+]);
+
+// スタンプ保存と同時に既読処理も実行
+$notebook->update([
+    'stamp_type' => $request->stamp_type,
+    'stamped_at' => now(),
+    'teacher_feedback' => $request->teacher_feedback,
+    'commented_at' => $request->teacher_feedback ? now() : null,
+    'is_read' => true,
+    'read_at' => now(),
 ]);
 ```
 

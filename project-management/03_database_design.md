@@ -56,7 +56,7 @@ notebooks (連絡帳) ★拡張
 ├─ (課題1の全カラム)
 │
 ├─ ★課題2追加カラム（実装）
-├─ stamp_type ENUM('none','good','great','fighting','care')
+├─ stamp_type ENUM('good','great','fighting','care')
 ├─ stamped_at TIMESTAMP
 ├─ teacher_feedback TEXT
 ├─ commented_at TIMESTAMP
@@ -185,7 +185,7 @@ grade_id BIGINT UNSIGNED NULL COMMENT '担当学年ID（学年主任のみ）'
 #### 課題2追加カラム（実装）
 | カラム名 | データ型 | NULL | デフォルト | 制約 | 説明 | 実装 |
 |---------|---------|------|----------|------|------|------|
-| stamp_type | ENUM('none','good','great','fighting','care') | NO | 'none' | - | スタンプ種類 | ✅ 実装 |
+| stamp_type | ENUM('good','great','fighting','care') | YES | NULL | - | スタンプ種類（既読処理時に必須） | ✅ 実装 |
 | stamped_at | TIMESTAMP | YES | NULL | - | スタンプ日時 | ✅ 実装 |
 | teacher_feedback | TEXT | YES | NULL | - | 生徒へのコメント | ✅ 実装 |
 | commented_at | TIMESTAMP | YES | NULL | - | コメント日時 | ✅ 実装 |
@@ -195,7 +195,6 @@ grade_id BIGINT UNSIGNED NULL COMMENT '担当学年ID（学年主任のみ）'
 | flag_memo | TEXT | YES | NULL | - | フラグメモ（気づきメモ） | ✅ 実装 |
 
 **スタンプ種類の意味**:
-- `none`: スタンプなし
 - `good`: 👍 いいね
 - `great`: ⭐ すごい
 - `fighting`: 💪 がんばれ
@@ -491,9 +490,9 @@ CREATE TABLE notebooks (
 ### 7.2 課題2（カラム追加 - 実装）
 ```sql
 -- notebooksテーブルに課題2の機能を追加
-ALTER TABLE notebooks 
--- スタンプ機能
-ADD COLUMN stamp_type ENUM('none', 'good', 'great', 'fighting', 'care') NOT NULL DEFAULT 'none' COMMENT 'スタンプ種類' AFTER is_read,
+ALTER TABLE notebooks
+-- スタンプ機能（既読処理時に必須）
+ADD COLUMN stamp_type ENUM('good', 'great', 'fighting', 'care') NULL COMMENT 'スタンプ種類（既読処理時に必須）' AFTER is_read,
 ADD COLUMN stamped_at TIMESTAMP NULL COMMENT 'スタンプ日時' AFTER stamp_type,
 
 -- 生徒へのコメント機能
@@ -707,7 +706,7 @@ mysql -u root -p laravel_notebook < notebooks_backup.sql
 notebooksテーブルに8カラム追加
 ```sql
 -- スタンプ機能（2カラム）
-stamp_type ENUM('none','good','great','fighting','care') DEFAULT 'none'
+stamp_type ENUM('good','great','fighting','care') NULL
 stamped_at TIMESTAMP NULL
 
 -- コメント機能（2カラム）
@@ -1001,18 +1000,18 @@ return new class extends Migration
     public function up()
     {
         Schema::table('notebooks', function (Blueprint $table) {
-            $table->enum('stamp_type', ['none', 'good', 'great', 'fighting', 'care'])
-                  ->default('none')
+            $table->enum('stamp_type', ['good', 'great', 'fighting', 'care'])
+                  ->nullable()
                   ->after('is_read')
-                  ->comment('スタンプ種類');
-            
+                  ->comment('スタンプ種類（既読処理時に必須）');
+
             $table->timestamp('stamped_at')
                   ->nullable()
                   ->after('stamp_type')
                   ->comment('スタンプ日時');
         });
     }
-    
+
     public function down()
     {
         Schema::table('notebooks', function (Blueprint $table) {
@@ -1339,11 +1338,11 @@ WHERE flag != 'none'
 GROUP BY flag;
 
 -- スタンプ使用状況
-SELECT 
+SELECT
     stamp_type,
     COUNT(*) as count
 FROM notebooks
-WHERE stamp_type != 'none'
+WHERE stamp_type IS NOT NULL
 GROUP BY stamp_type;
 ```
 
