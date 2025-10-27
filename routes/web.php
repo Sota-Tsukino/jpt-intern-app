@@ -40,7 +40,10 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     Route::get('/home', [TeacherHomeController::class, 'index'])->name('home');
     Route::get('/entries', [TeacherEntryController::class, 'index'])->name('entries.index');
     Route::get('/entries/{entry}', [TeacherEntryController::class, 'show'])->name('entries.show');
-    Route::patch('/entries/{entry}/mark-as-read', [TeacherEntryController::class, 'markAsRead'])->name('entries.markAsRead');
+
+    // 課題2: スタンプ・フラグ機能
+    Route::patch('/entries/{entry}/stamp', [TeacherEntryController::class, 'stamp'])->name('entries.stamp');
+    Route::patch('/entries/{entry}/flag', [TeacherEntryController::class, 'updateFlag'])->name('entries.updateFlag');
 });
 
 // 管理者用ルート
