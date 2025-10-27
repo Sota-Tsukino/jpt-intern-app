@@ -20,6 +20,15 @@ class Entry extends Model
         'is_read',
         'read_at',
         'read_by',
+        // 課題2追加カラム
+        'stamp_type',
+        'stamped_at',
+        'teacher_feedback',
+        'commented_at',
+        'flag',
+        'flagged_at',
+        'flagged_by',
+        'flag_memo',
     ];
 
     protected $casts = [
@@ -27,6 +36,10 @@ class Entry extends Model
         'submitted_at' => 'datetime',
         'is_read' => 'boolean',
         'read_at' => 'datetime',
+        // 課題2追加カラム
+        'stamped_at' => 'datetime',
+        'commented_at' => 'datetime',
+        'flagged_at' => 'datetime',
     ];
 
     /**
@@ -43,5 +56,13 @@ class Entry extends Model
     public function reader()
     {
         return $this->belongsTo(User::class, 'read_by');
+    }
+
+    /**
+     * リレーション: フラグを設定した教師
+     */
+    public function flagger()
+    {
+        return $this->belongsTo(User::class, 'flagged_by');
     }
 }
