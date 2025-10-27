@@ -21,7 +21,15 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return redirect(RouteServiceProvider::HOME);
+                // 役割に応じたホーム画面にリダイレクト
+                $user = Auth::guard($guard)->user();
+
+                return match ($user->role) {
+                    'admin' => redirect()->route('admin.home'),
+                    'teacher' => redirect()->route('teacher.home'),
+                    'student' => redirect()->route('student.home'),
+                    default => redirect(RouteServiceProvider::HOME),
+                };
             }
         }
 
