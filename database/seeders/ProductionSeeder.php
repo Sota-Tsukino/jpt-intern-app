@@ -139,10 +139,10 @@ class ProductionSeeder extends Seeder
                 // 提出日時（記録対象日の翌日）
                 $submittedAt = (clone $entryDate)->addDay()->setTime(8, rand(0, 59), rand(0, 59));
 
-                // 既読フラグ（最新2件以外は既読にする）
-                $isRead = $createdEntries < ($entryCount - 2);
-                $readAt = $isRead ? (clone $submittedAt)->addHours(rand(1, 5)) : null;
-                $readBy = $isRead && $teacher ? $teacher->id : null;
+                // スタンプ（最新2件以外はスタンプ済み = 既読扱い）
+                $hasStamp = $createdEntries < ($entryCount - 2);
+                $stampType = $hasStamp ? ['good', 'great', 'fighting', 'care'][rand(0, 3)] : null;
+                $stampedAt = $hasStamp ? (clone $submittedAt)->addHours(rand(1, 5)) : null;
 
                 Entry::create([
                     'user_id' => $student->id,
@@ -152,9 +152,8 @@ class ProductionSeeder extends Seeder
                     'mental_status' => rand(1, 5),
                     'study_reflection' => $this->getRandomStudyReflection(),
                     'club_reflection' => rand(0, 1) ? $this->getRandomClubReflection() : null,
-                    'is_read' => $isRead,
-                    'read_at' => $readAt,
-                    'read_by' => $readBy,
+                    'stamp_type' => $stampType,
+                    'stamped_at' => $stampedAt,
                 ]);
 
                 $createdEntries++;

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('entries', function (Blueprint $table) {
             $table->enum('stamp_type', ['good', 'great', 'fighting', 'care'])
                   ->nullable()
-                  ->after('read_by')
+                  ->after('club_reflection')
                   ->comment('スタンプ種類（既読処理時に必須）');
 
             $table->timestamp('stamped_at')
