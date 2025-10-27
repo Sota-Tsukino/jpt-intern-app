@@ -363,24 +363,111 @@ notifications ← users（多対一）
 
 ## 6. 初期データ（Seeder）
 
-### 6.1 ClassSeeder（課題1）
-```php
-// 学年（1~3）× クラス（A~B）= 6クラス
-$classes = [
-    ['grade' => 1, 'class_name' => 'A'],  // 1年A組
-    ['grade' => 1, 'class_name' => 'B'],  // 1年B組
-    ['grade' => 2, 'class_name' => 'A'],  // 2年A組
-    ['grade' => 2, 'class_name' => 'B'],  // 2年B組
-    ['grade' => 3, 'class_name' => 'A'],  // 3年A組
-    ['grade' => 3, 'class_name' => 'B'],  // 3年B組
-];
+### 6.1 Seederの種類
+
+本プロジェクトでは、用途に応じて2種類のSeederを用意します。
+
+| Seeder種類 | 用途 | データ量 | 実行速度 |
+|-----------|------|---------|---------|
+| **開発用** | 日常的な開発・動作確認 | 少量（素早くテスト） | 高速（数秒） |
+| **本番用/デモ用** | ページャー・検索機能の動作確認 | 大量（実運用想定） | 低速（数十秒〜1分） |
+
+### 6.2 開発用Seeder（DevelopmentSeeder）
+
+**目的**: 素早い動作確認、機能開発時のテスト
+
+**データ量**:
+```
+- クラス: 6クラス（変更なし）
+- 管理者: 1人
+- 担任: 6人（各クラス1名ずつ）
+- 生徒: 18人（各クラス3名）
+- 連絡帳: 54件（各生徒3件ずつ）
 ```
 
-### 6.2 UserSeeder（課題1）
+**所要時間**: 約5秒
+
+**実行コマンド**:
+```bash
+php artisan db:seed --class=DevelopmentSeeder
 ```
+
+**データ構成**:
+```php
+// database/seeders/DevelopmentSeeder.php
+
+// 1. ClassSeeder: 6クラス
+$classes = [
+    ['grade' => 1, 'class_name' => 'A'],
+    ['grade' => 1, 'class_name' => 'B'],
+    ['grade' => 2, 'class_name' => 'A'],
+    ['grade' => 2, 'class_name' => 'B'],
+    ['grade' => 3, 'class_name' => 'A'],
+    ['grade' => 3, 'class_name' => 'B'],
+];
+
+// 2. UserSeeder（少量）
 - 管理者 × 1人
-- 担任 × 6人（各クラス1名ずつ）
-- 生徒 × 180人（各クラス最大30名）
+- 担任 × 6人（各クラス1名）
+- 生徒 × 18人（各クラス3名のみ）
+
+// 3. NotebookSeeder（少量）
+- 各生徒 × 3件（直近3日分のみ）
+```
+
+**ユーザー例**:
+```
+管理者: admin@example.com / password
+担任: teacher1A@example.com / password
+生徒: student1A01@example.com / password
+```
+
+---
+
+### 6.3 本番用/デモ用Seeder（ProductionSeeder）
+
+**目的**: ページャー動作確認、検索機能テスト、実運用想定のデモ
+
+**データ量**:
+```
+- クラス: 6クラス（変更なし）
+- 管理者: 1人
+- 担任: 6人（各クラス1名ずつ）
+- 生徒: 180人（各クラス30名）
+- 連絡帳: 約550件
+  - 生徒1人（デモ用）: 30件（推移グラフ確認用）
+  - その他の生徒: 3件ずつ
+```
+
+**所要時間**: 約30秒〜1分
+
+**実行コマンド**:
+```bash
+php artisan db:seed --class=ProductionSeeder
+```
+
+**データ構成**:
+```php
+// database/seeders/ProductionSeeder.php
+
+// 1. ClassSeeder: 6クラス（開発用と同じ）
+$classes = [
+    ['grade' => 1, 'class_name' => 'A'],
+    ['grade' => 1, 'class_name' => 'B'],
+    ['grade' => 2, 'class_name' => 'A'],
+    ['grade' => 2, 'class_name' => 'B'],
+    ['grade' => 3, 'class_name' => 'A'],
+    ['grade' => 3, 'class_name' => 'B'],
+];
+
+// 2. UserSeeder（大量）
+- 管理者 × 1人
+- 担任 × 6人（各クラス1名）
+- 生徒 × 180人（各クラス30名）
+
+// 3. NotebookSeeder（大量）
+- 生徒1人（student1A01）: 30件（直近30日分、推移グラフ確認用）
+- その他の生徒: 3件ずつ（合計約540件）
 ```
 
 **管理者**:
@@ -395,7 +482,7 @@ $classes = [
 **担任例**:
 ```
 氏名: 田中先生
-メール: tanaka@example.com
+メール: teacher1A@example.com
 パスワード: password
 ロール: teacher
 クラス: 1年A組
@@ -403,33 +490,68 @@ $classes = [
 
 **生徒例**:
 ```
-氏名: 山田太郎
-メール: yamada@example.com
+氏名: 1年A組01番
+メール: student1A01@example.com
 パスワード: password
 ロール: student
 クラス: 1年A組
 ```
 
-### 6.3 NotebookSeeder（課題1）
-```
-- 生徒1人（デモ用）: 30件（直近30日分）
-- その他の生徒: 3件ずつ
-```
-
-**データ例**:
+**連絡帳データ例**:
 ```php
 [
-    'user_id' => 3,  // 生徒ID
+    'user_id' => 3,  // 生徒ID（student1A01）
     'record_date' => '2025-10-20',
     'submitted_at' => '2025-10-21 08:30:00',
     'health_status' => 3,
     'mental_status' => 3,
-    'study_reflection' => '今日は数学の授業で...',
-    'club_reflection' => 'サッカー部で...',
+    'study_reflection' => '今日は数学の授業で二次関数を学びました。グラフの書き方が難しかったです。',
+    'club_reflection' => 'サッカー部でシュート練習をしました。',
     'is_read' => false,
     'read_at' => null,
 ]
 ```
+
+---
+
+### 6.4 Seederの実行方法
+
+#### 開発時（通常）
+```bash
+# 1. データベースをリセット + 開発用Seeder実行
+php artisan migrate:fresh --seed --seeder=DevelopmentSeeder
+
+# または
+php artisan migrate:fresh
+php artisan db:seed --class=DevelopmentSeeder
+```
+
+#### 本番デモ・動作確認時
+```bash
+# 1. データベースをリセット + 本番用Seeder実行
+php artisan migrate:fresh --seed --seeder=ProductionSeeder
+
+# または
+php artisan migrate:fresh
+php artisan db:seed --class=ProductionSeeder
+```
+
+#### DatabaseSeederでの切り替え
+```php
+// database/seeders/DatabaseSeeder.php
+
+public function run(): void
+{
+    // 環境変数で切り替え
+    $seederClass = config('app.env') === 'production'
+        ? ProductionSeeder::class
+        : DevelopmentSeeder::class;
+
+    $this->call($seederClass);
+}
+```
+
+これにより、`php artisan migrate:fresh --seed` で環境に応じた適切なSeederが実行されます。
 
 ---
 
