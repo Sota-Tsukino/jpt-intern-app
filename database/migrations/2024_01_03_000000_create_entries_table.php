@@ -20,9 +20,6 @@ return new class extends Migration
             $table->tinyInteger('mental_status')->comment('メンタル（1〜5）');
             $table->string('study_reflection', 500)->comment('授業振り返り');
             $table->string('club_reflection', 500)->nullable()->comment('部活振り返り');
-            $table->boolean('is_read')->default(false)->comment('既読フラグ');
-            $table->timestamp('read_at')->nullable()->comment('既読日時');
-            $table->foreignId('read_by')->nullable()->constrained('users')->onDelete('set null')->comment('既読処理した教師ID');
             $table->timestamps();
 
             // 同じ生徒が同じ記録対象日の記録を複数持たない
@@ -30,7 +27,6 @@ return new class extends Migration
 
             // インデックス追加
             $table->index('entry_date');
-            $table->index('is_read');
         });
     }
 

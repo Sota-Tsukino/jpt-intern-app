@@ -17,9 +17,6 @@ class Entry extends Model
         'mental_status',
         'study_reflection',
         'club_reflection',
-        'is_read',
-        'read_at',
-        'read_by',
         // 課題2追加カラム
         'stamp_type',
         'stamped_at',
@@ -34,8 +31,6 @@ class Entry extends Model
     protected $casts = [
         'entry_date' => 'date',
         'submitted_at' => 'datetime',
-        'is_read' => 'boolean',
-        'read_at' => 'datetime',
         // 課題2追加カラム
         'stamped_at' => 'datetime',
         'commented_at' => 'datetime',
@@ -48,14 +43,6 @@ class Entry extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * リレーション: 既読処理した教師
-     */
-    public function reader()
-    {
-        return $this->belongsTo(User::class, 'read_by');
     }
 
     /**
