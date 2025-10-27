@@ -518,20 +518,20 @@ $classes = [
 
 #### 開発時（通常）
 ```bash
-# 1. データベースをリセット + 開発用Seeder実行
-php artisan migrate:fresh --seed --seeder=DevelopmentSeeder
+# 開発用Seeder実行（推奨）
+php artisan migrate:fresh && php artisan db:seed --class=DevelopmentSeeder
 
-# または
+# または分けて実行
 php artisan migrate:fresh
 php artisan db:seed --class=DevelopmentSeeder
 ```
 
 #### 本番デモ・動作確認時
 ```bash
-# 1. データベースをリセット + 本番用Seeder実行
-php artisan migrate:fresh --seed --seeder=ProductionSeeder
+# 本番用Seeder実行（推奨）
+php artisan migrate:fresh && php artisan db:seed --class=ProductionSeeder
 
-# または
+# または分けて実行
 php artisan migrate:fresh
 php artisan db:seed --class=ProductionSeeder
 ```
