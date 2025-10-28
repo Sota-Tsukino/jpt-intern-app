@@ -7,7 +7,7 @@
         </h2>
         <div class="text-sm text-gray-600 mt-1">
           @if ($teacher->class)
-            {{ $teacher->class->grade }}年{{ $teacher->class->class_name }}組 - 過去30日間のデータ
+            {{ $teacher->class->grade }}年{{ $teacher->class->class_name }}組 - {{ $startDate->format('Y/m/d') }} ～ {{ $endDate->format('Y/m/d') }}
           @endif
         </div>
       </div>
@@ -16,10 +16,51 @@
 
   <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <!-- 日付指定フォーム -->
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+        <div class="p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">期間指定</h3>
+          <form method="GET" action="{{ route('teacher.class.statistics') }}" class="flex flex-wrap gap-4 items-end">
+            <div>
+              <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">開始日</label>
+              <input type="date" id="start_date" name="start_date"
+                value="{{ $startDate->format('Y-m-d') }}"
+                class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+            </div>
+            <div>
+              <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">終了日</label>
+              <input type="date" id="end_date" name="end_date"
+                value="{{ $endDate->format('Y-m-d') }}"
+                class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+            </div>
+            <div>
+              <button type="submit"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                表示
+              </button>
+            </div>
+            <div>
+              <a href="{{ route('teacher.class.statistics') }}"
+                class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                リセット
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
 
           @if (count($dates) > 0)
+            <!-- 注意書き -->
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+              <p class="text-sm text-blue-700">
+                <span class="font-semibold">※ グラフについて：</span>
+                連絡帳の提出データが存在する日のみ表示されます。指定期間内でもデータがない日は表示されません。
+              </p>
+            </div>
+
             <!-- グラフ表示 -->
             <div class="mb-8">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">体調・メンタルの平均値推移</h3>
@@ -43,14 +84,14 @@
                 <p class="text-2xl font-bold text-blue-600">
                   {{ number_format(collect($healthData)->avg(), 2) }}
                 </p>
-                <p class="text-xs text-blue-600 mt-1">過去30日間</p>
+                <p class="text-xs text-blue-600 mt-1">指定期間内</p>
               </div>
               <div class="bg-purple-50 rounded-lg p-4">
                 <h4 class="text-sm font-medium text-purple-800 mb-2">メンタル平均</h4>
                 <p class="text-2xl font-bold text-purple-600">
                   {{ number_format(collect($mentalData)->avg(), 2) }}
                 </p>
-                <p class="text-xs text-purple-600 mt-1">過去30日間</p>
+                <p class="text-xs text-purple-600 mt-1">指定期間内</p>
               </div>
               <div class="bg-green-50 rounded-lg p-4">
                 <h4 class="text-sm font-medium text-green-800 mb-2">平均提出数</h4>
@@ -62,7 +103,7 @@
             </div>
           @else
             <div class="text-center py-12">
-              <p class="text-gray-500">過去30日間のデータがありません。</p>
+              <p class="text-gray-500">指定期間のデータがありません。</p>
             </div>
           @endif
 

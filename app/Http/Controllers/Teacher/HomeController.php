@@ -135,14 +135,22 @@ class HomeController extends Controller
         $teacher = $request->user();
         $teacher->load('class');
 
-        // 過去30日分のクラス全体の連絡帳データを取得
-        $startDate = Carbon::now()->subDays(30);
+        // 日付パラメータを取得（デフォルトは過去30日）
+        $startDate = $request->input('start_date')
+            ? Carbon::parse($request->input('start_date'))
+            : Carbon::now()->subDays(30);
 
+        $endDate = $request->input('end_date')
+            ? Carbon::parse($request->input('end_date'))
+            : Carbon::now();
+
+        // クラス全体の連絡帳データを取得
         $entries = \App\Models\Entry::whereHas('user', function ($query) use ($teacher) {
             $query->where('role', 'student')
                   ->where('class_id', $teacher->class_id);
         })
-        ->where('entry_date', '>=', $startDate)
+        ->where('entry_date', '>=', $startDate->format('Y-m-d'))
+        ->where('entry_date', '<=', $endDate->format('Y-m-d'))
         ->orderBy('entry_date', 'asc')
         ->get();
 
@@ -169,7 +177,9 @@ class HomeController extends Controller
             'dates',
             'healthData',
             'mentalData',
-            'submissionCounts'
+            'submissionCounts',
+            'startDate',
+            'endDate'
         ));
     }
 }
