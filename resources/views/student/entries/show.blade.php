@@ -108,26 +108,54 @@
             </div>
           </div>
 
-          <!-- 既読情報 -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">既読状況</label>
-            @if ($entry->is_read)
-              <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+          <!-- 先生からのフィードバック -->
+          <div class="mb-6 pb-6 border-b border-gray-200">
+            <label class="block text-sm font-medium text-gray-700 mb-2">先生からのフィードバック</label>
+            @if ($entry->stamp_type)
+              <!-- スタンプ -->
+              <div class="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-4">
                 <div class="flex items-center mb-2">
-                  <span class="text-2xl mr-2">👍</span>
-                  <span class="text-green-800 font-semibold">既読</span>
+                  <span class="text-3xl mr-3">
+                    @if ($entry->stamp_type === 'good') 👍
+                    @elseif ($entry->stamp_type === 'great') ⭐
+                    @elseif ($entry->stamp_type === 'fighting') 💪
+                    @elseif ($entry->stamp_type === 'care') 💙
+                    @endif
+                  </span>
+                  <span class="text-blue-800 font-semibold text-lg">
+                    @if ($entry->stamp_type === 'good') いいね
+                    @elseif ($entry->stamp_type === 'great') すごい
+                    @elseif ($entry->stamp_type === 'fighting') がんばれ
+                    @elseif ($entry->stamp_type === 'care') 心配
+                    @endif
+                  </span>
                 </div>
-                <p class="text-sm text-gray-700">
-                  <span class="font-medium">既読日時:</span>
-                  {{ \Carbon\Carbon::parse($entry->read_at)->format('Y/m/d H:i') }}
-                </p>
-                @if ($entry->reader)
-                  <p class="text-sm text-gray-700">
-                    <span class="font-medium">確認者:</span>
-                    {{ $entry->reader->name }}
+                @if ($entry->stamped_at)
+                  <p class="text-sm text-blue-700">
+                    スタンプ日時: {{ \Carbon\Carbon::parse($entry->stamped_at)->format('Y/m/d H:i') }}
                   </p>
                 @endif
               </div>
+
+              <!-- 先生からのコメント -->
+              @if ($entry->teacher_feedback)
+                <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                  <label class="block text-sm font-medium text-green-800 mb-2">💬 先生からのコメント</label>
+                  <p class="text-gray-900 whitespace-pre-wrap">{{ $entry->teacher_feedback }}</p>
+                  <div class="text-xs text-green-700 mt-2 space-y-1">
+                    @if ($entry->stamper)
+                      <p>
+                        <span class="font-medium">担当者:</span> {{ $entry->stamper->name }}
+                      </p>
+                    @endif
+                    @if ($entry->commented_at)
+                      <p>
+                        <span class="font-medium">コメント日時:</span> {{ \Carbon\Carbon::parse($entry->commented_at)->format('Y/m/d H:i') }}
+                      </p>
+                    @endif
+                  </div>
+                </div>
+              @endif
             @else
               <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <div class="flex items-center">
@@ -142,7 +170,7 @@
             @endif
           </div>
           <div class="flex gap-2 mt-6">
-            @if (!$entry->is_read)
+            @if (!$entry->stamp_type)
               <a href="{{ route('student.entries.edit', $entry) }}"
                 class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                 編集

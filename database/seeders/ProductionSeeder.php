@@ -143,6 +143,7 @@ class ProductionSeeder extends Seeder
                 $hasStamp = $createdEntries < ($entryCount - 2);
                 $stampType = $hasStamp ? ['good', 'great', 'fighting', 'care'][rand(0, 3)] : null;
                 $stampedAt = $hasStamp ? (clone $submittedAt)->addHours(rand(1, 5)) : null;
+                $stampedBy = $hasStamp && $teacher ? $teacher->id : null;
 
                 Entry::create([
                     'user_id' => $student->id,
@@ -154,6 +155,7 @@ class ProductionSeeder extends Seeder
                     'club_reflection' => rand(0, 1) ? $this->getRandomClubReflection() : null,
                     'stamp_type' => $stampType,
                     'stamped_at' => $stampedAt,
+                    'stamped_by' => $stampedBy,
                 ]);
 
                 $createdEntries++;

@@ -26,13 +26,21 @@
                 <p class="text-sm text-green-700">
                   提出日時: {{ \Carbon\Carbon::parse($todayEntry->submitted_at)->format('Y/m/d H:i') }}
                 </p>
-                @if ($todayEntry->is_read)
+                @if ($todayEntry->stamp_type)
                   <p class="text-sm text-green-700">
-                    👍 既読済み
-                    @if ($todayEntry->read_at)
-                      ({{ \Carbon\Carbon::parse($todayEntry->read_at)->format('m/d H:i') }})
+                    @if ($todayEntry->stamp_type === 'good') 👍
+                    @elseif ($todayEntry->stamp_type === 'great') ⭐
+                    @elseif ($todayEntry->stamp_type === 'fighting') 💪
+                    @elseif ($todayEntry->stamp_type === 'care') 💙
+                    @endif
+                    既読済み
+                    @if ($todayEntry->stamped_at)
+                      ({{ \Carbon\Carbon::parse($todayEntry->stamped_at)->format('m/d H:i') }})
                     @endif
                   </p>
+                  @if ($todayEntry->teacher_feedback)
+                    <p class="text-sm text-blue-700">💬 先生からコメントがあります</p>
+                  @endif
                 @else
                   <p class="text-sm text-gray-600">未読</p>
                 @endif
@@ -177,10 +185,15 @@
                         </span>
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        @if ($entry->is_read)
+                        @if ($entry->stamp_type)
                           <span
                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                            👍既読
+                            @if ($entry->stamp_type === 'good') 👍
+                            @elseif ($entry->stamp_type === 'great') ⭐
+                            @elseif ($entry->stamp_type === 'fighting') 💪
+                            @elseif ($entry->stamp_type === 'care') 💙
+                            @endif
+                            既読
                           </span>
                         @else
                           <span
