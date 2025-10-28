@@ -72,7 +72,6 @@ class EntryController extends Controller
             'mental_status' => $validated['mental_status'],
             'study_reflection' => $validated['study_reflection'],
             'club_reflection' => $validated['club_reflection'],
-            'is_read' => false,
         ]);
 
         return redirect()
@@ -107,9 +106,6 @@ class EntryController extends Controller
             abort(403, 'この連絡帳を閲覧する権限がありません。');
         }
 
-        // 既読者情報を取得
-        $entry->load('reader');
-
         return view('student.entries.show', compact('entry'));
     }
 
@@ -125,8 +121,8 @@ class EntryController extends Controller
             abort(403, 'この連絡帳を編集する権限がありません。');
         }
 
-        // 既読済みの場合は編集不可
-        if ($entry->is_read) {
+        // 既読済み（スタンプ押下済み）の場合は編集不可
+        if ($entry->stamp_type) {
             return redirect()
                 ->route('student.entries.show', $entry)
                 ->with('error', '既読済みの連絡帳は編集できません。');
@@ -147,8 +143,8 @@ class EntryController extends Controller
             abort(403, 'この連絡帳を編集する権限がありません。');
         }
 
-        // 既読済みの場合は更新不可
-        if ($entry->is_read) {
+        // 既読済み（スタンプ押下済み）の場合は更新不可
+        if ($entry->stamp_type) {
             return redirect()
                 ->route('student.entries.show', $entry)
                 ->with('error', '既読済みの連絡帳は編集できません。');
