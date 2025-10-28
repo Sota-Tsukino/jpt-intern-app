@@ -47,6 +47,9 @@ Route::middleware(['auth', 'role:teacher,sub_teacher'])->prefix('teacher')->name
 
     // 課題2: 生徒の体調・メンタル推移グラフ
     Route::get('/students/{user}/graph', [TeacherHomeController::class, 'showGraph'])->name('students.graph');
+
+    // 課題2: クラス全体の統計グラフ
+    Route::get('/class/statistics', [TeacherHomeController::class, 'showClassStatistics'])->name('class.statistics');
 });
 
 // 管理者用ルート

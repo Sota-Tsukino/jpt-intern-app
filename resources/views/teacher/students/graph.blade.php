@@ -6,7 +6,7 @@
           {{ $user->name }}さんの体調・メンタル推移
         </h2>
         <div class="text-sm text-gray-600 mt-1">
-          過去30日間のデータ
+          {{ $startDate->format('Y/m/d') }} ～ {{ $endDate->format('Y/m/d') }}
         </div>
       </div>
     </div>
@@ -14,6 +14,39 @@
 
   <div class="py-12">
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <!-- 日付指定フォーム -->
+      <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-6">
+        <div class="p-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">期間指定</h3>
+          <form method="GET" action="{{ route('teacher.students.graph', $user) }}" class="flex flex-wrap gap-4 items-end">
+            <div>
+              <label for="start_date" class="block text-sm font-medium text-gray-700 mb-1">開始日</label>
+              <input type="date" id="start_date" name="start_date"
+                value="{{ $startDate->format('Y-m-d') }}"
+                class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+            </div>
+            <div>
+              <label for="end_date" class="block text-sm font-medium text-gray-700 mb-1">終了日</label>
+              <input type="date" id="end_date" name="end_date"
+                value="{{ $endDate->format('Y-m-d') }}"
+                class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+            </div>
+            <div>
+              <button type="submit"
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                表示
+              </button>
+            </div>
+            <div>
+              <a href="{{ route('teacher.students.graph', $user) }}"
+                class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                リセット
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 text-gray-900">
 
@@ -40,6 +73,14 @@
           </div>
 
           @if ($entries->count() > 0)
+            <!-- 注意書き -->
+            <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+              <p class="text-sm text-blue-700">
+                <span class="font-semibold">※ グラフについて：</span>
+                連絡帳の提出データが存在する日のみ表示されます。指定期間内でもデータがない日は表示されません。
+              </p>
+            </div>
+
             <!-- グラフ表示 -->
             <div class="mb-8">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">体調・メンタルの推移</h3>
@@ -96,7 +137,7 @@
             </div>
           @else
             <div class="text-center py-12">
-              <p class="text-gray-500">過去30日間のデータがありません。</p>
+              <p class="text-gray-500">指定期間のデータがありません。</p>
             </div>
           @endif
 
