@@ -44,6 +44,9 @@ Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')
     // 課題2: スタンプ・フラグ機能
     Route::patch('/entries/{entry}/stamp', [TeacherEntryController::class, 'stamp'])->name('entries.stamp');
     Route::patch('/entries/{entry}/flag', [TeacherEntryController::class, 'updateFlag'])->name('entries.updateFlag');
+
+    // 課題2: 生徒の体調・メンタル推移グラフ
+    Route::get('/students/{user}/graph', [TeacherHomeController::class, 'showGraph'])->name('students.graph');
 });
 
 // 管理者用ルート

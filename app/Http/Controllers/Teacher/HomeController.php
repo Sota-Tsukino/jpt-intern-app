@@ -66,6 +66,43 @@ class HomeController extends Controller
     }
 
     /**
+     * 生徒の体調・メンタル推移グラフを表示（課題2）
+     */
+    public function showGraph(Request $request, User $user): View
+    {
+        $teacher = $request->user();
+        $teacher->load('class');
+
+        // 指定された生徒が担当クラスの生徒かチェック
+        if ($user->role !== 'student' || $user->class_id !== $teacher->class_id) {
+            abort(403, 'この生徒の情報を閲覧する権限がありません。');
+        }
+
+        // 過去30日分の連絡帳データを取得（記録対象日の降順）
+        $entries = $user->entries()
+            ->where('entry_date', '>=', Carbon::now()->subDays(30))
+            ->orderBy('entry_date', 'asc')
+            ->get();
+
+        // グラフ用にデータを整形
+        $dates = $entries->pluck('entry_date')->map(function ($date) {
+            return Carbon::parse($date)->format('m/d');
+        })->toArray();
+
+        $healthData = $entries->pluck('health_status')->toArray();
+        $mentalData = $entries->pluck('mental_status')->toArray();
+
+        return view('teacher.students.graph', compact(
+            'teacher',
+            'user',
+            'entries',
+            'dates',
+            'healthData',
+            'mentalData'
+        ));
+    }
+
+    /**
      * 記録対象日を計算（前登校日）
      */
     private function calculateEntryDate(): string
