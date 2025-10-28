@@ -113,11 +113,10 @@
   </div>
 
   @if ($entries->count() > 0)
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
-      const ctx = document.getElementById('healthChart');
-      new Chart(ctx, {
+      document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('healthChart');
+        new Chart(ctx, {
         type: 'line',
         data: {
           labels: @json($dates),
@@ -178,6 +177,7 @@
             }
           }
         }
+      });
       });
     </script>
   @endif
