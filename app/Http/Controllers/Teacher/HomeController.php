@@ -126,4 +126,50 @@ class HomeController extends Controller
 
         return $entryDate->format('Y-m-d');
     }
+
+    /**
+     * クラス全体の統計グラフを表示（課題2）
+     */
+    public function showClassStatistics(Request $request): View
+    {
+        $teacher = $request->user();
+        $teacher->load('class');
+
+        // 過去30日分のクラス全体の連絡帳データを取得
+        $startDate = Carbon::now()->subDays(30);
+
+        $entries = \App\Models\Entry::whereHas('user', function ($query) use ($teacher) {
+            $query->where('role', 'student')
+                  ->where('class_id', $teacher->class_id);
+        })
+        ->where('entry_date', '>=', $startDate)
+        ->orderBy('entry_date', 'asc')
+        ->get();
+
+        // 日付ごとにデータを集計
+        $dailyStats = $entries->groupBy('entry_date')->map(function ($dayEntries) {
+            return [
+                'health_avg' => round($dayEntries->avg('health_status'), 2),
+                'mental_avg' => round($dayEntries->avg('mental_status'), 2),
+                'count' => $dayEntries->count(),
+            ];
+        });
+
+        // グラフ用にデータを整形
+        $dates = $dailyStats->keys()->map(function ($date) {
+            return Carbon::parse($date)->format('m/d');
+        })->toArray();
+
+        $healthData = $dailyStats->pluck('health_avg')->toArray();
+        $mentalData = $dailyStats->pluck('mental_avg')->toArray();
+        $submissionCounts = $dailyStats->pluck('count')->toArray();
+
+        return view('teacher.class.statistics', compact(
+            'teacher',
+            'dates',
+            'healthData',
+            'mentalData',
+            'submissionCounts'
+        ));
+    }
 }
