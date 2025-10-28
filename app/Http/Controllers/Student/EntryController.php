@@ -106,6 +106,9 @@ class EntryController extends Controller
             abort(403, 'この連絡帳を閲覧する権限がありません。');
         }
 
+        // スタンプを押した教師情報を取得
+        $entry->load('stamper');
+
         return view('student.entries.show', compact('entry'));
     }
 

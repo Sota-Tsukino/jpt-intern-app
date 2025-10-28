@@ -109,15 +109,13 @@ class EntryController extends Controller
             'teacher_feedback.max' => 'コメントは500文字以内で入力してください。',
         ]);
 
-        // スタンプ・コメント・既読情報を保存
+        // スタンプ・コメントを保存（スタンプ保存時点で既読扱いとする）
         $entry->update([
             'stamp_type' => $validated['stamp_type'],
             'stamped_at' => Carbon::now(),
+            'stamped_by' => $teacher->id,
             'teacher_feedback' => $validated['teacher_feedback'],
             'commented_at' => $validated['teacher_feedback'] ? Carbon::now() : null,
-            'is_read' => true,
-            'read_at' => Carbon::now(),
-            'read_by' => $teacher->id,
         ]);
 
         $redirectUrl = route('teacher.entries.show', $entry);

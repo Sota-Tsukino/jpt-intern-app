@@ -20,6 +20,7 @@ class Entry extends Model
         // 課題2追加カラム
         'stamp_type',
         'stamped_at',
+        'stamped_by',
         'teacher_feedback',
         'commented_at',
         'flag',
@@ -43,6 +44,14 @@ class Entry extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * リレーション: スタンプを押した教師
+     */
+    public function stamper()
+    {
+        return $this->belongsTo(User::class, 'stamped_by');
     }
 
     /**

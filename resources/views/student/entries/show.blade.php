@@ -142,11 +142,18 @@
                 <div class="bg-green-50 rounded-lg p-4 border border-green-200">
                   <label class="block text-sm font-medium text-green-800 mb-2">💬 先生からのコメント</label>
                   <p class="text-gray-900 whitespace-pre-wrap">{{ $entry->teacher_feedback }}</p>
-                  @if ($entry->commented_at)
-                    <p class="text-xs text-green-700 mt-2">
-                      コメント日時: {{ \Carbon\Carbon::parse($entry->commented_at)->format('Y/m/d H:i') }}
-                    </p>
-                  @endif
+                  <div class="text-xs text-green-700 mt-2 space-y-1">
+                    @if ($entry->stamper)
+                      <p>
+                        <span class="font-medium">担当者:</span> {{ $entry->stamper->name }}
+                      </p>
+                    @endif
+                    @if ($entry->commented_at)
+                      <p>
+                        <span class="font-medium">コメント日時:</span> {{ \Carbon\Carbon::parse($entry->commented_at)->format('Y/m/d H:i') }}
+                      </p>
+                    @endif
+                  </div>
                 </div>
               @endif
             @else
