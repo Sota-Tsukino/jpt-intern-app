@@ -54,6 +54,14 @@ class HomeController extends Controller
 
         $unsubmittedCount = $totalStudents - $submittedCount;
 
+        // 注意が必要な生徒を抽出（体調・メンタルが2以下）
+        $alertStudents = $students->filter(function ($student) {
+            if (!$student->todayEntry) {
+                return false;
+            }
+            return $student->todayEntry->health_status <= 2 || $student->todayEntry->mental_status <= 2;
+        });
+
         return view('teacher.home', compact(
             'teacher',
             'students',
@@ -61,7 +69,8 @@ class HomeController extends Controller
             'submittedCount',
             'readCount',
             'unsubmittedCount',
-            'entryDate'
+            'entryDate',
+            'alertStudents'
         ));
     }
 
