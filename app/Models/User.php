@@ -60,12 +60,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Entry::class);
     }
-
-    /**
-     * リレーション: 既読処理した連絡帳（担任の場合）
-     */
-    public function readEntries()
-    {
-        return $this->hasMany(Entry::class, 'read_by');
-    }
 }
