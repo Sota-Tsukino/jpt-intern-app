@@ -87,9 +87,19 @@ class HomeController extends Controller
             abort(403, 'この生徒の情報を閲覧する権限がありません。');
         }
 
-        // 過去30日分の連絡帳データを取得（記録対象日の降順）
+        // 日付パラメータを取得（デフォルトは過去30日）
+        $startDate = $request->input('start_date')
+            ? Carbon::parse($request->input('start_date'))
+            : Carbon::now()->subDays(30);
+
+        $endDate = $request->input('end_date')
+            ? Carbon::parse($request->input('end_date'))
+            : Carbon::now();
+
+        // 連絡帳データを取得
         $entries = $user->entries()
-            ->where('entry_date', '>=', Carbon::now()->subDays(30))
+            ->where('entry_date', '>=', $startDate->format('Y-m-d'))
+            ->where('entry_date', '<=', $endDate->format('Y-m-d'))
             ->orderBy('entry_date', 'asc')
             ->get();
 
@@ -107,7 +117,9 @@ class HomeController extends Controller
             'entries',
             'dates',
             'healthData',
-            'mentalData'
+            'mentalData',
+            'startDate',
+            'endDate'
         ));
     }
 
