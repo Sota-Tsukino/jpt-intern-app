@@ -41,9 +41,8 @@ Route::middleware(['auth', 'role:teacher,sub_teacher'])->prefix('teacher')->name
     Route::get('/entries', [TeacherEntryController::class, 'index'])->name('entries.index');
     Route::get('/entries/{entry}', [TeacherEntryController::class, 'show'])->name('entries.show');
 
-    // 課題2: スタンプ・フラグ機能
+    // 課題2: スタンプ機能
     Route::patch('/entries/{entry}/stamp', [TeacherEntryController::class, 'stamp'])->name('entries.stamp');
-    Route::patch('/entries/{entry}/flag', [TeacherEntryController::class, 'updateFlag'])->name('entries.updateFlag');
 
     // 課題2: 生徒の体調・メンタル推移グラフ
     Route::get('/students/{user}/graph', [TeacherHomeController::class, 'showGraph'])->name('students.graph');
