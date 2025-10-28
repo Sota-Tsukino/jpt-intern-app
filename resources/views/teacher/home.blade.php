@@ -92,10 +92,15 @@
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
                         @if ($student->todayEntry)
-                          @if ($student->todayEntry->is_read)
+                          @if ($student->todayEntry->stamp_type)
                             <span
                               class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              👍既読
+                              @if ($student->todayEntry->stamp_type === 'good') 👍
+                              @elseif ($student->todayEntry->stamp_type === 'great') ⭐
+                              @elseif ($student->todayEntry->stamp_type === 'fighting') 💪
+                              @elseif ($student->todayEntry->stamp_type === 'care') 💙
+                              @endif
+                              既読
                             </span>
                           @else
                             <span

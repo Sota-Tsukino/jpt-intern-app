@@ -46,7 +46,7 @@ class HomeController extends Controller
 
             if ($todayEntry) {
                 $submittedCount++;
-                if ($todayEntry->is_read) {
+                if ($todayEntry->stamp_type) {
                     $readCount++;
                 }
             }

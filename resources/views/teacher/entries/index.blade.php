@@ -113,10 +113,15 @@
                         {{ \Carbon\Carbon::parse($entry->submitted_at)->format('Y/m/d H:i') }}
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        @if ($entry->is_read)
+                        @if ($entry->stamp_type)
                           <span
                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                            👍既読
+                            @if ($entry->stamp_type === 'good') 👍
+                            @elseif ($entry->stamp_type === 'great') ⭐
+                            @elseif ($entry->stamp_type === 'fighting') 💪
+                            @elseif ($entry->stamp_type === 'care') 💙
+                            @endif
+                            既読
                           </span>
                         @else
                           <span
