@@ -148,30 +148,17 @@
                 @endif
               </div>
 
-              @if ($entry->teacher_feedback)
-                <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
-                  <label class="block text-sm font-medium text-gray-700 mb-2">先生からのコメント</label>
+              <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">先生からのコメント</label>
+                @if ($entry->teacher_feedback)
                   <p class="text-gray-900 whitespace-pre-wrap">{{ $entry->teacher_feedback }}</p>
                   @if ($entry->commented_at)
                     <p class="text-xs text-gray-500 mt-2">
                       コメント日時: {{ \Carbon\Carbon::parse($entry->commented_at)->format('Y年m月d日 H:i') }}
                     </p>
                   @endif
-                </div>
-              @endif
-
-              <!-- 既読ステータス -->
-              <div class="bg-green-50 rounded-lg p-4 border border-green-200">
-                <div class="flex items-center mb-2">
-                  <svg class="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-green-800 font-semibold">既読</span>
-                </div>
-                @if ($entry->read_at)
-                  <p class="text-sm text-green-700">
-                    既読日時: {{ \Carbon\Carbon::parse($entry->read_at)->format('Y年m月d日 H:i') }}
-                  </p>
+                @else
+                  <p class="text-gray-400 italic">コメントなし</p>
                 @endif
               </div>
             @else
@@ -224,9 +211,6 @@
                   <textarea id="teacher_feedback" name="teacher_feedback" rows="4" maxlength="500"
                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                     placeholder="生徒へのメッセージを入力してください（500文字以内）">{{ old('teacher_feedback') }}</textarea>
-                  <p class="mt-1 text-sm text-gray-500">
-                    <span id="feedback-count">0</span> / 500文字
-                  </p>
                   @error('teacher_feedback')
                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                   @enderror
@@ -240,19 +224,6 @@
                   </button>
                 </div>
               </form>
-
-              <script>
-                // 文字数カウンター
-                const textarea = document.getElementById('teacher_feedback');
-                const counter = document.getElementById('feedback-count');
-                if (textarea && counter) {
-                  textarea.addEventListener('input', function() {
-                    counter.textContent = this.value.length;
-                  });
-                  // 初期値設定
-                  counter.textContent = textarea.value.length;
-                }
-              </script>
             @endif
           </div>
 
@@ -293,7 +264,7 @@
                   </p>
                 @endif
                 @if ($entry->flag_memo)
-                  <div class="mt-3 p-3 bg-white rounded border
+                  <div class="mt-3 p-3 bg-gray-100 rounded border
                     @if ($entry->flag === 'watch') border-yellow-200
                     @elseif ($entry->flag === 'urgent') border-red-200
                     @endif
@@ -356,9 +327,11 @@
                 <textarea id="flag_memo" name="flag_memo" rows="4" maxlength="1000"
                   class="w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
                   placeholder="この生徒について気づいたことをメモしてください（1000文字以内）">{{ old('flag_memo', $entry->flag_memo) }}</textarea>
-                <p class="mt-1 text-sm text-gray-500">
-                  <span id="memo-count">{{ $entry->flag_memo ? mb_strlen($entry->flag_memo) : 0 }}</span> / 1000文字
-                </p>
+                <div class="mb-2 p-3 bg-cyan-50 border border-cyan-200 rounded-md">
+                  <p class="text-sm text-cyan-800">
+                    ℹ️注目レベルとメモは上書き保存されます。変更前のメモは残りません。
+                  </p>
+                </div>
                 @error('flag_memo')
                   <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -373,16 +346,6 @@
               </div>
             </form>
 
-            <script>
-              // 文字数カウンター（メモ）
-              const memoTextarea = document.getElementById('flag_memo');
-              const memoCounter = document.getElementById('memo-count');
-              if (memoTextarea && memoCounter) {
-                memoTextarea.addEventListener('input', function() {
-                  memoCounter.textContent = this.value.length;
-                });
-              }
-            </script>
           </div>
 
           <!-- アクションボタン -->
