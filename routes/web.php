@@ -35,8 +35,8 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::patch('/entries/{entry}', [StudentEntryController::class, 'update'])->name('entries.update');
 });
 
-// 担任用ルート
-Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+// 担任・副担任用ルート
+Route::middleware(['auth', 'role:teacher,sub_teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/home', [TeacherHomeController::class, 'index'])->name('home');
     Route::get('/entries', [TeacherEntryController::class, 'index'])->name('entries.index');
     Route::get('/entries/{entry}', [TeacherEntryController::class, 'show'])->name('entries.show');
