@@ -33,7 +33,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
-            'role' => 'required|in:student,teacher',
+            'role' => 'required|in:student,teacher,sub_teacher',
             'class_id' => 'nullable|exists:classes,id',
         ], [
             'name.required' => '名前は必須です。',
@@ -101,7 +101,7 @@ class UserController extends Controller
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
-            'role' => 'required|in:student,teacher',
+            'role' => 'required|in:student,teacher,sub_teacher',
             'class_id' => 'nullable|exists:classes,id',
         ], [
             'name.required' => '名前は必須です。',
