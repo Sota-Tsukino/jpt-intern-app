@@ -46,6 +46,7 @@
                 <option value="">選択してください</option>
                 <option value="student" {{ old('role', $user->role) === 'student' ? 'selected' : '' }}>生徒</option>
                 <option value="teacher" {{ old('role', $user->role) === 'teacher' ? 'selected' : '' }}>担任</option>
+                <option value="sub_teacher" {{ old('role', $user->role) === 'sub_teacher' ? 'selected' : '' }}>副担任</option>
               </select>
               @error('role')
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
