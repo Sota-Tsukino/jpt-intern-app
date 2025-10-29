@@ -27,6 +27,7 @@ class RedirectIfAuthenticated
                 return match ($user->role) {
                     'admin' => redirect()->route('admin.home'),
                     'teacher' => redirect()->route('teacher.home'),
+                    'sub_teacher' => redirect()->route('teacher.home'),
                     'student' => redirect()->route('student.home'),
                     default => redirect(RouteServiceProvider::HOME),
                 };
