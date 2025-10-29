@@ -68,6 +68,7 @@ npm run build
 |--------|---------------|-----------|
 | 管理者 | admin@example.com | password |
 | 担任 | teacher1A@example.com | password |
+| 副担任 | subteacher1A@example.com | password |
 | 生徒 | student1A01@example.com | password |
 
 詳細は [テストアカウント一覧](Test_Account.md) を参照してください。
