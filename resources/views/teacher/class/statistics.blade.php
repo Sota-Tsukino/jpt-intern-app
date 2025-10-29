@@ -65,7 +65,9 @@
             <div class="mb-8">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">体調・メンタルの平均値推移</h3>
               <div class="bg-gray-50 rounded-lg p-4">
-                <canvas id="classStatisticsChart" style="max-height: 400px;"></canvas>
+                <div style="position: relative; height: 300px; min-height: 300px;">
+                  <canvas id="classStatisticsChart"></canvas>
+                </div>
               </div>
             </div>
 
@@ -73,7 +75,9 @@
             <div class="mb-8">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">日別提出数の推移</h3>
               <div class="bg-gray-50 rounded-lg p-4">
-                <canvas id="submissionChart" style="max-height: 300px;"></canvas>
+                <div style="position: relative; height: 250px; min-height: 250px;">
+                  <canvas id="submissionChart"></canvas>
+                </div>
               </div>
             </div>
 
@@ -149,7 +153,7 @@
           },
           options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             scales: {
               y: {
                 beginAtZero: false,
@@ -206,7 +210,7 @@
           },
           options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             scales: {
               y: {
                 beginAtZero: true,
