@@ -85,7 +85,9 @@
             <div class="mb-8">
               <h3 class="text-lg font-semibold text-gray-800 mb-4">体調・メンタルの推移</h3>
               <div class="bg-gray-50 rounded-lg p-4">
-                <canvas id="healthChart" style="max-height: 400px;"></canvas>
+                <div style="position: relative; height: 300px; min-height: 300px;">
+                  <canvas id="healthChart"></canvas>
+                </div>
               </div>
             </div>
 
@@ -182,7 +184,7 @@
         },
         options: {
           responsive: true,
-          maintainAspectRatio: true,
+          maintainAspectRatio: false,
           scales: {
             y: {
               beginAtZero: false,
