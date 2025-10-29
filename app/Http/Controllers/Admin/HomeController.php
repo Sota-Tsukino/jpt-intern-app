@@ -17,7 +17,7 @@ class HomeController extends Controller
     {
         // 統計情報
         $totalStudents = User::where('role', 'student')->count();
-        $totalTeachers = User::where('role', 'teacher')->count();
+        $totalTeachers = User::whereIn('role', ['teacher', 'sub_teacher'])->count();
         $totalClasses = ClassModel::count();
 
         // ユーザー一覧を取得（管理者を除く）

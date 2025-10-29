@@ -64,6 +64,7 @@
                   <option value="">全て</option>
                   <option value="student" {{ request('role') === 'student' ? 'selected' : '' }}>生徒</option>
                   <option value="teacher" {{ request('role') === 'teacher' ? 'selected' : '' }}>担任</option>
+                  <option value="sub_teacher" {{ request('role') === 'sub_teacher' ? 'selected' : '' }}>副担任</option>
                 </select>
               </div>
 
@@ -159,6 +160,11 @@
                           <span
                             class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                             担任
+                          </span>
+                        @elseif ($user->role === 'sub_teacher')
+                          <span
+                            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            副担任
                           </span>
                         @endif
                       </td>
