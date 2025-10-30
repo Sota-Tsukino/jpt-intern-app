@@ -17,16 +17,25 @@ class Entry extends Model
         'mental_status',
         'study_reflection',
         'club_reflection',
-        'is_read',
-        'read_at',
-        'read_by',
+        // 課題2追加カラム
+        'stamp_type',
+        'stamped_at',
+        'stamped_by',
+        'teacher_feedback',
+        'commented_at',
+        'flag',
+        'flagged_at',
+        'flagged_by',
+        'flag_memo',
     ];
 
     protected $casts = [
         'entry_date' => 'date',
         'submitted_at' => 'datetime',
-        'is_read' => 'boolean',
-        'read_at' => 'datetime',
+        // 課題2追加カラム
+        'stamped_at' => 'datetime',
+        'commented_at' => 'datetime',
+        'flagged_at' => 'datetime',
     ];
 
     /**
@@ -38,10 +47,18 @@ class Entry extends Model
     }
 
     /**
-     * リレーション: 既読処理した教師
+     * リレーション: スタンプを押した教師
      */
-    public function reader()
+    public function stamper()
     {
-        return $this->belongsTo(User::class, 'read_by');
+        return $this->belongsTo(User::class, 'stamped_by');
+    }
+
+    /**
+     * リレーション: フラグを設定した教師
+     */
+    public function flagger()
+    {
+        return $this->belongsTo(User::class, 'flagged_by');
     }
 }

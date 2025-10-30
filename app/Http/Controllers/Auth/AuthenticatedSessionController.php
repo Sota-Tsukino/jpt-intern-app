@@ -34,6 +34,7 @@ class AuthenticatedSessionController extends Controller
         $redirectTo = match ($user->role) {
             'student' => route('student.home'),
             'teacher' => route('teacher.home'),
+            'sub_teacher' => route('teacher.home'),
             'admin' => route('admin.home'),
             default => RouteServiceProvider::HOME,
         };

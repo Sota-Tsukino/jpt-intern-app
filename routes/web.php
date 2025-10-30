@@ -35,12 +35,20 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
     Route::patch('/entries/{entry}', [StudentEntryController::class, 'update'])->name('entries.update');
 });
 
-// 担任用ルート
-Route::middleware(['auth', 'role:teacher'])->prefix('teacher')->name('teacher.')->group(function () {
+// 担任・副担任用ルート
+Route::middleware(['auth', 'role:teacher,sub_teacher'])->prefix('teacher')->name('teacher.')->group(function () {
     Route::get('/home', [TeacherHomeController::class, 'index'])->name('home');
     Route::get('/entries', [TeacherEntryController::class, 'index'])->name('entries.index');
     Route::get('/entries/{entry}', [TeacherEntryController::class, 'show'])->name('entries.show');
-    Route::patch('/entries/{entry}/mark-as-read', [TeacherEntryController::class, 'markAsRead'])->name('entries.markAsRead');
+
+    // 課題2: スタンプ機能
+    Route::patch('/entries/{entry}/stamp', [TeacherEntryController::class, 'stamp'])->name('entries.stamp');
+
+    // 課題2: 生徒の体調・メンタル推移グラフ
+    Route::get('/students/{user}/graph', [TeacherHomeController::class, 'showGraph'])->name('students.graph');
+
+    // 課題2: クラス全体の統計グラフ
+    Route::get('/class/statistics', [TeacherHomeController::class, 'showClassStatistics'])->name('class.statistics');
 });
 
 // 管理者用ルート

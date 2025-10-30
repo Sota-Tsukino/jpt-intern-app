@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="@if(Auth::user()->role === 'student'){{ route('student.home') }}@elseif(Auth::user()->role === 'teacher'){{ route('teacher.home') }}@elseif(Auth::user()->role === 'admin'){{ route('admin.home') }}@endif">
+                    <a href="@if(Auth::user()->role === 'student'){{ route('student.home') }}@elseif(Auth::user()->role === 'teacher' || Auth::user()->role === 'sub_teacher'){{ route('teacher.home') }}@elseif(Auth::user()->role === 'admin'){{ route('admin.home') }}@endif">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
                     </a>
                 </div>
@@ -16,7 +16,7 @@
                         <x-nav-link :href="route('student.home')" :active="request()->routeIs('student.home')">
                             ホーム
                         </x-nav-link>
-                    @elseif(Auth::user()->role === 'teacher')
+                    @elseif(Auth::user()->role === 'teacher' || Auth::user()->role === 'sub_teacher')
                         <x-nav-link :href="route('teacher.home')" :active="request()->routeIs('teacher.home')">
                             ホーム
                         </x-nav-link>
@@ -49,6 +49,8 @@
                             生徒
                         @elseif (Auth::user()->role === 'teacher')
                             担任
+                        @elseif (Auth::user()->role === 'sub_teacher')
+                            副担任
                         @elseif (Auth::user()->role === 'admin')
                             管理者
                         @endif
@@ -112,6 +114,8 @@
                         生徒
                     @elseif (Auth::user()->role === 'teacher')
                         担任
+                    @elseif (Auth::user()->role === 'sub_teacher')
+                        副担任
                     @elseif (Auth::user()->role === 'admin')
                         管理者
                     @endif
@@ -129,7 +133,7 @@
                     <x-responsive-nav-link :href="route('student.home')" :active="request()->routeIs('student.home')">
                         ホーム
                     </x-responsive-nav-link>
-                @elseif(Auth::user()->role === 'teacher')
+                @elseif(Auth::user()->role === 'teacher' || Auth::user()->role === 'sub_teacher')
                     <x-responsive-nav-link :href="route('teacher.home')" :active="request()->routeIs('teacher.home')">
                         ホーム
                     </x-responsive-nav-link>

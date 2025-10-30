@@ -33,11 +33,12 @@ class EntryController extends Controller
         })->where('entry_date', '!=', $targetDate)->with(['user']);
 
         // 既読ステータスで絞り込み（デフォルトは既読済みのみ）
+        // ※stamp_typeが存在する = 既読とみなす
         $readStatus = $request->get('read_status', 'read'); // デフォルト: read（既読のみ）
         if ($readStatus === 'read') {
-            $query->where('is_read', true);
+            $query->whereNotNull('stamp_type');
         } elseif ($readStatus === 'unread') {
-            $query->where('is_read', false);
+            $query->whereNull('stamp_type');
         }
         // 'all' の場合は絞り込みなし
 
@@ -83,9 +84,10 @@ class EntryController extends Controller
     }
 
     /**
-     * 連絡帳を既読にする
+     * スタンプ・生徒へのコメントを保存（課題2）
+     * ※スタンプ保存と同時に既読処理も実行
      */
-    public function markAsRead(Request $request, Entry $entry): RedirectResponse
+    public function stamp(Request $request, Entry $entry): RedirectResponse
     {
         $teacher = $request->user();
 
@@ -94,24 +96,26 @@ class EntryController extends Controller
 
         // 担任のクラスの生徒かチェック
         if ($entry->user->class_id !== $teacher->class_id) {
-            abort(403, 'この連絡帳を既読にする権限がありません。');
+            abort(403, 'この連絡帳を編集する権限がありません。');
         }
 
-        // 既に既読済みかチェック
-        if ($entry->is_read) {
-            $redirectUrl = route('teacher.entries.show', $entry);
-            if ($request->has('from')) {
-                $redirectUrl .= '?from=' . $request->get('from');
-            }
-            return redirect($redirectUrl)
-                ->with('error', 'この連絡帳は既に既読済みです。');
-        }
+        // バリデーション
+        $validated = $request->validate([
+            'stamp_type' => 'required|in:good,great,fighting,care',
+            'teacher_feedback' => 'nullable|string|max:500',
+        ], [
+            'stamp_type.required' => 'スタンプは必須です。',
+            'stamp_type.in' => '無効なスタンプが選択されています。',
+            'teacher_feedback.max' => 'コメントは500文字以内で入力してください。',
+        ]);
 
-        // 既読にする
+        // スタンプ・コメントを保存（スタンプ保存時点で既読扱いとする）
         $entry->update([
-            'is_read' => true,
-            'read_at' => Carbon::now(),
-            'read_by' => $teacher->id,
+            'stamp_type' => $validated['stamp_type'],
+            'stamped_at' => Carbon::now(),
+            'stamped_by' => $teacher->id,
+            'teacher_feedback' => $validated['teacher_feedback'],
+            'commented_at' => $validated['teacher_feedback'] ? Carbon::now() : null,
         ]);
 
         $redirectUrl = route('teacher.entries.show', $entry);
@@ -120,6 +124,6 @@ class EntryController extends Controller
         }
 
         return redirect($redirectUrl)
-            ->with('success', '連絡帳を既読にしました。');
+            ->with('success', 'スタンプとコメントを保存しました。');
     }
 }

@@ -118,59 +118,127 @@
             </div>
           </div>
 
-          <!-- 既読ステータス -->
+          <!-- スタンプとコメント（課題2） -->
           <div class="mb-6 pb-6 border-t pt-6">
-            @if ($entry->is_read)
-              <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">スタンプとコメント（生徒向け）</h3>
+
+            @if ($entry->stamp_type)
+              <!-- スタンプ保存済み -->
+              <div class="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-4">
                 <div class="flex items-center mb-2">
-                  <span class="text-2xl mr-2">👍</span>
-                  <span class="text-green-800 font-semibold">既読</span>
+                  <span class="text-3xl mr-3">
+                    @if ($entry->stamp_type === 'good') 👍
+                    @elseif ($entry->stamp_type === 'great') ⭐
+                    @elseif ($entry->stamp_type === 'fighting') 💪
+                    @elseif ($entry->stamp_type === 'care') 💙
+                    @endif
+                  </span>
+                  <span class="text-blue-800 font-semibold">
+                    @if ($entry->stamp_type === 'good') いいね
+                    @elseif ($entry->stamp_type === 'great') すごい
+                    @elseif ($entry->stamp_type === 'fighting') がんばれ
+                    @elseif ($entry->stamp_type === 'care') 心配
+                    @endif
+                  </span>
                 </div>
-                @if ($entry->read_at)
-                  <p class="text-sm text-green-700">
-                    既読日時: {{ \Carbon\Carbon::parse($entry->read_at)->format('Y年m月d日 H:i') }}
+                @if ($entry->stamped_at)
+                  <p class="text-sm text-blue-700">
+                    スタンプ日時: {{ \Carbon\Carbon::parse($entry->stamped_at)->format('Y年m月d日 H:i') }}
                   </p>
                 @endif
               </div>
-            @else
-              <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div class="flex items-center">
-                  <svg class="w-5 h-5 text-gray-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clip-rule="evenodd" />
-                  </svg>
-                  <span class="text-gray-600">未読</span>
-                </div>
+
+              <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">先生からのコメント</label>
+                @if ($entry->teacher_feedback)
+                  <p class="text-gray-900 whitespace-pre-wrap">{{ $entry->teacher_feedback }}</p>
+                  @if ($entry->commented_at)
+                    <p class="text-xs text-gray-500 mt-2">
+                      コメント日時: {{ \Carbon\Carbon::parse($entry->commented_at)->format('Y年m月d日 H:i') }}
+                    </p>
+                  @endif
+                @else
+                  <p class="text-gray-400 italic">コメントなし</p>
+                @endif
               </div>
+            @else
+              <!-- スタンプ未選択 - 入力フォーム -->
+              <form method="POST" action="{{ route('teacher.entries.stamp', $entry) }}{{ request('from') ? '?from=' . request('from') : '' }}">
+                @csrf
+                @method('PATCH')
+
+                <!-- スタンプ選択 -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-3">スタンプを選択 <span class="text-red-500">*</span></label>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <label class="cursor-pointer">
+                      <input type="radio" name="stamp_type" value="good" class="peer sr-only" required>
+                      <div class="p-4 text-center border-2 border-gray-300 rounded-lg peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:border-blue-300 transition">
+                        <div class="text-4xl mb-2">👍</div>
+                        <div class="text-sm font-medium">いいね</div>
+                      </div>
+                    </label>
+                    <label class="cursor-pointer">
+                      <input type="radio" name="stamp_type" value="great" class="peer sr-only" required>
+                      <div class="p-4 text-center border-2 border-gray-300 rounded-lg peer-checked:border-yellow-500 peer-checked:bg-yellow-50 hover:border-yellow-300 transition">
+                        <div class="text-4xl mb-2">⭐</div>
+                        <div class="text-sm font-medium">すごい</div>
+                      </div>
+                    </label>
+                    <label class="cursor-pointer">
+                      <input type="radio" name="stamp_type" value="fighting" class="peer sr-only" required>
+                      <div class="p-4 text-center border-2 border-gray-300 rounded-lg peer-checked:border-green-500 peer-checked:bg-green-50 hover:border-green-300 transition">
+                        <div class="text-4xl mb-2">💪</div>
+                        <div class="text-sm font-medium">がんばれ</div>
+                      </div>
+                    </label>
+                    <label class="cursor-pointer">
+                      <input type="radio" name="stamp_type" value="care" class="peer sr-only" required>
+                      <div class="p-4 text-center border-2 border-gray-300 rounded-lg peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:border-purple-300 transition">
+                        <div class="text-4xl mb-2">💙</div>
+                        <div class="text-sm font-medium">心配</div>
+                      </div>
+                    </label>
+                  </div>
+                  @error('stamp_type')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                  @enderror
+                </div>
+
+                <!-- 生徒へのコメント -->
+                <div class="mb-4">
+                  <label for="teacher_feedback" class="block text-sm font-medium text-gray-700 mb-2">生徒へのコメント（任意）</label>
+                  <textarea id="teacher_feedback" name="teacher_feedback" rows="4" maxlength="500"
+                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    placeholder="生徒へのメッセージを入力してください（500文字以内）">{{ old('teacher_feedback') }}</textarea>
+                  @error('teacher_feedback')
+                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                  @enderror
+                </div>
+
+                <!-- 保存ボタン -->
+                <div class="flex justify-end">
+                  <button type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    スタンプを押す
+                  </button>
+                </div>
+              </form>
             @endif
           </div>
 
           <!-- アクションボタン -->
-          <div class="flex justify-between items-center">
-            <div class="flex gap-2">
-              @if (request('from') === 'past')
-                <a href="{{ route('teacher.entries.index') }}"
-                  class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                  過去記録一覧に戻る
-                </a>
-              @else
-                <a href="{{ route('teacher.home') }}"
-                  class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                  ホームに戻る
-                </a>
-              @endif
-            </div>
-
-            @if (!$entry->is_read)
-              <form method="POST" action="{{ route('teacher.entries.markAsRead', $entry) }}{{ request('from') ? '?from=' . request('from') : '' }}">
-                @csrf
-                @method('PATCH')
-                <button type="submit"
-                  class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                  既読にする
-                </button>
-              </form>
+          <div class="flex justify-start items-center">
+            @if (request('from') === 'past')
+              <a href="{{ route('teacher.entries.index') }}"
+                class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                過去記録一覧に戻る
+              </a>
+            @else
+              <a href="{{ route('teacher.home') }}"
+                class="inline-flex items-center px-4 py-2 bg-gray-300 border border-transparent rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest hover:bg-gray-400 focus:bg-gray-400 active:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                ホームに戻る
+              </a>
             @endif
           </div>
         </div>
