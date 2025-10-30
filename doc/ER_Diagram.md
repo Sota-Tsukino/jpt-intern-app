@@ -4,6 +4,8 @@
 
 連絡帳管理システムのデータベース構造を以下に示します。
 
+※図は課題１時点の仕様になります。
+
 ![ER図](images/ER_diagram.png)
 
 ---
@@ -155,24 +157,6 @@
 - ユーザーが削除されると、そのユーザーの連絡帳も削除される
 - クラスが削除されても、ユーザーは削除されない（class_idがNULLになる）
 
----
-
-## マイグレーション実行順序
-
-**課題１時点**:
-
-1. `create_classes_table`（最初）
-2. `add_custom_fields_to_users_table`（Breeze標準を拡張）
-3. `create_entries_table`（最後）
-
-**課題２で追加**:
-
-4. `add_stamp_type_to_entries_table`（複数スタンプ対応）
-5. `add_teacher_feedback_to_entries_table`（教師フィードバック機能）
-6. `add_flag_columns_to_entries_table`（フラグ機能、UI未実装）
-7. `add_sub_teacher_role_to_users_table`（副担任ロール追加）
-
----
 
 ## 課題２での変更点まとめ
 
