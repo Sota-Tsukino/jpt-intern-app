@@ -30,7 +30,7 @@
 | name | VARCHAR(50) | NO | - | - | 氏名 |
 | email | VARCHAR(255) | NO | - | UNIQUE | メールアドレス（ログインID） |
 | password | VARCHAR(255) | NO | - | - | パスワード（ハッシュ化） |
-| role | ENUM('student','teacher','admin') | NO | 'student' | - | 役割 |
+| role | ENUM('student','teacher','sub_teacher','admin') | NO | 'student' | - | 役割 ※課題２でsub_teacherを追加 |
 | class_id | BIGINT UNSIGNED | YES | NULL | FK | 所属クラスID（生徒・担任のみ） |
 | remember_token | VARCHAR(100) | YES | NULL | - | ログイン保持トークン |
 | created_at | TIMESTAMP | NO | CURRENT_TIMESTAMP | - | 作成日時 |
@@ -76,8 +76,8 @@
 
 **概要**: 生徒の連絡帳記録を管理
 
-| カラム名 | データ型 | NULL | 制約 | 説明 |
-|---------|---------|------|------|------|
+| カラム名 | データ型 | NULL | 制約 | 説明 | 備考 |
+|---------|---------|------|------|------|------|
 | id | BIGINT UNSIGNED | NO | PK | 記録ID |
 | user_id | BIGINT UNSIGNED | NO | FK | 生徒ID |
 | entry_date | DATE | NO | - | 記録対象日（前登校日） |
@@ -89,6 +89,13 @@
 | is_read | BOOLEAN | NO | DEFAULT FALSE | 既読フラグ |
 | read_at | TIMESTAMP | YES | - | 既読日時 |
 | read_by | BIGINT UNSIGNED | YES | FK | 既読処理した教師ID |
+| stamp_type | ENUM('good','great','fighting','care') | YES | NULL | - | スタンプ種類 ※課題２で追加 |
+| teacher_feedback | TEXT | YES | NULL | - | 教師からのコメント ※課題２で追加 |
+| feedback_by | BIGINT UNSIGNED | YES | NULL | FK | コメント者の教師ID ※課題２で追加 |
+| flag | ENUM('none','watch','urgent') | NO | 'none' | - | フラグ種類 ※課題２で追加（UI未実装） |
+| flagged_at | TIMESTAMP | YES | NULL | - | フラグ設定日時 ※課題２で追加（UI未実装） |
+| flagged_by | BIGINT UNSIGNED | YES | NULL | FK | フラグ設定者の教師ID ※課題２で追加（UI未実装） |
+| flag_memo | TEXT | YES | NULL | - | フラグメモ ※課題２で追加（UI未実装） |
 | created_at | TIMESTAMP | NO | - | 作成日時 |
 | updated_at | TIMESTAMP | NO | - | 更新日時 |
 
@@ -101,6 +108,8 @@
 **外部キー**:
 - `user_id` → `users(id)` ON DELETE CASCADE
 - `read_by` → `users(id)` ON DELETE SET NULL
+- `feedback_by` → `users(id)` ON DELETE SET NULL ※課題２で追加
+- `flagged_by` → `users(id)` ON DELETE SET NULL ※課題２で追加
 
 **ビジネスルール**:
 - 同じ生徒が同じ記録対象日の記録を複数持たない
@@ -120,6 +129,14 @@
 ### 3. entries ← users（既読者）（多対一）
 - 1人の教師が複数の連絡帳を既読処理
 - `entries.read_by` → `users.id`
+
+### 4. entries ← users（コメント者）（多対一）※課題２で追加
+- 1人の教師が複数の連絡帳にコメント
+- `entries.feedback_by` → `users.id`
+
+### 5. entries ← users（フラグ設定者）（多対一）※課題２で追加
+- 1人の教師が複数の連絡帳にフラグを設定
+- `entries.flagged_by` → `users.id`
 
 ---
 
@@ -142,8 +159,32 @@
 
 ## マイグレーション実行順序
 
+**課題１時点**:
+
 1. `create_classes_table`（最初）
 2. `add_custom_fields_to_users_table`（Breeze標準を拡張）
 3. `create_entries_table`（最後）
+
+**課題２で追加**:
+
+4. `add_stamp_type_to_entries_table`（複数スタンプ対応）
+5. `add_teacher_feedback_to_entries_table`（教師フィードバック機能）
+6. `add_flag_columns_to_entries_table`（フラグ機能、UI未実装）
+7. `add_sub_teacher_role_to_users_table`（副担任ロール追加）
+
+---
+
+## 課題２での変更点まとめ
+
+### usersテーブル
+- `role`カラムに`sub_teacher`値を追加
+
+### entriesテーブル
+**実装済み**:
+- `stamp_type`: 複数種類のスタンプ対応（4種類）
+- `teacher_feedback`, `feedback_by`: 教師からのコメント機能
+
+**DB準備済み（UI未実装）**:
+- `flag`, `flagged_at`, `flagged_by`, `flag_memo`: フラグ機能（将来的な実装に備えて準備）
 
 
