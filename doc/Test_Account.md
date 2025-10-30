@@ -43,7 +43,6 @@
 **その他の担任アカウント**:
 | 氏名 | メールアドレス | クラス |
 |------|---------------|--------|
-| 田中先生 | teacher1A@example.com | 1年A組 |
 | 佐藤先生 | teacher1B@example.com | 1年B組 |
 | 高橋先生 | teacher2A@example.com | 2年A組 |
 | 伊藤先生 | teacher2B@example.com | 2年B組 |
@@ -73,7 +72,6 @@
 **その他の副担任アカウント**:
 | 氏名 | メールアドレス | クラス |
 |------|---------------|--------|
-| 鈴木副担任 | subteacher1A@example.com | 1年A組 |
 | 木村副担任 | subteacher1B@example.com | 1年B組 |
 | 小林副担任 | subteacher2A@example.com | 2年A組 |
 | 加藤副担任 | subteacher2B@example.com | 2年B組 |
